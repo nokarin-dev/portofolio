@@ -4,7 +4,8 @@ import { Inter } from "next/font/google";
 import LocalFont from "next/font/local";
 import Header from "@/components/header";
 import { CursorProvider } from "@/components/cursor";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/css/globals.css";
 
 export const metadata: Metadata = {
@@ -73,6 +74,7 @@ export default function RootLayout({
             {children}
           </CursorProvider>
         </main>
+        <SpeedInsights />
       </body>
     </html>
   );
