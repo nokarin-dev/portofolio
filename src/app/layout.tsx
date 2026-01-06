@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import LocalFont from "next/font/local";
 import Header from "@/components/header";
 import { CursorProvider } from "@/components/cursor";
+import { Analytics } from "@vercel/analytics/next"
 import "@/css/globals.css";
 
 export const metadata: Metadata = {
@@ -62,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={[inter.variable, calSans.variable].join(" ")}>
       <head>
+        <Analytics />
         <GoogleAnalytics gaId="G-QSP6RGTH9T" />
       </head>
       <body className="bg-black antialiased overflow-x-hidden">
