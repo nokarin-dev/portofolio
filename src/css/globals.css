@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
-* {
-    cursor: none !important;
+@media (pointer: fine) {
+    * {
+        cursor: none !important;
+    }
+
+    html,
+    body {
+        cursor: none !important;
+    }
 }
 
 html,
 body {
     scroll-behavior: smooth;
     scrollbar-width: thin;
-    scrollbar-color: gray transparent;
-    cursor: none !important;
+    scrollbar-color: #52525b transparent;
     -webkit-tap-highlight-color: transparent;
 }
 
