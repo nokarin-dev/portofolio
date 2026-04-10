@@ -77,7 +77,7 @@ const projects = [
   {
     name: "FrameExtractor",
     tech: "Flutter · Dart",
-    desc: "A mobile app to extract individual frames from video files.",
+    desc: "FrameExtractor is a modern, cross-platform video frame extractor with a clean UI built with Flutter, powered by ffmpeg and yt-dlp. Supports local video files and direct YouTube URL extraction.",
     href: "https://github.com/nokarin-dev/FrameExtractor",
     image: "https://github.com/user-attachments/assets/d458829a-c268-4590-911e-1e00fc964312?raw=true",
     status: "public",
@@ -85,7 +85,7 @@ const projects = [
   {
     name: "HorizonUI",
     tech: "Java · Gradle",
-    desc: "A custom UI framework and component library for Java/Gradle projects.",
+    desc: "HorizonUI Bring a modern, clean, and customizable user interface to Minecraft. HorizonUI focuses on visual clarity, animated backgrounds, and layout refinement to deliver a fresh and immersive UI experience.",
     href: "https://github.com/nokarin-dev/HorizonUI",
     image: "https://github.com/nokarin-dev/horizonui/blob/main/assets/HorizonUI_Banner.png?raw=true",
     status: "public",
@@ -93,7 +93,7 @@ const projects = [
   {
     name: "Lancer",
     tech: "React · TailwindCSS · Motion · FastAPI",
-    desc: "A full-stack web application - coming soon.",
+    desc: "Lancer is the all-in-one API analytics and quota manager made for developers. Track usage, set limits, and never lose control of your endpoints again.",
     href: null,
     image: null,
     status: "private",
@@ -101,7 +101,7 @@ const projects = [
   {
     name: "Celeris",
     tech: "React · TailwindCSS · Motion · Next-Auth",
-    desc: "A modern auth-powered web app - coming soon.",
+    desc: "Celeris delivers real-time visibility into build pipelines, CI/CD health, and key development metrics — built for speed, designed for devs.",
     href: null,
     image: null,
     status: "private",
