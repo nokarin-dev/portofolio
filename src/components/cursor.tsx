@@ -100,7 +100,7 @@ function CursorShell() {
 
         const handleEnter = (el: Element) => {
             hoverTarget.current = el;
-            
+
             if (isTextElement(el)) {
                 const height = getTextHeight(el);
                 setMode("caret");

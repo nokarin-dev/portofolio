@@ -15,8 +15,20 @@ html,
 body {
     scroll-behavior: smooth;
     scrollbar-width: thin;
-    scrollbar-color: #52525b transparent;
+    scrollbar-color: #3f3f46 transparent;
     -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.3);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 .cursor-glass-core {
@@ -35,4 +47,81 @@ body {
     font-size: 13px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.36);
+}
+
+html.light body {
+    background-color: #fafafa;
+    color: #18181b;
+}
+
+html.light .bg-black {
+    background-color: #dddddd !important;
+}
+
+html.light .bg-zinc-950 {
+    background-color: #f4f4f5 !important;
+}
+
+html.light .bg-zinc-900 {
+    background-color: #e4e4e7 !important;
+}
+
+html.light .bg-zinc-800 {
+    background-color: #d4d4d8 !important;
+}
+
+html.light .border-zinc-900 {
+    border-color: #e4e4e7 !important;
+}
+
+html.light .border-zinc-800 {
+    border-color: #d4d4d8 !important;
+}
+
+html.light .border-zinc-700 {
+    border-color: #a1a1aa !important;
+}
+
+html.light .border-zinc-700\/60 {
+    border-color: rgba(161, 161, 170, 0.6) !important;
+}
+
+html.light .text-white {
+    color: #18181b !important;
+}
+
+html.light .text-zinc-300 {
+    color: #3f3f46 !important;
+}
+
+html.light .text-zinc-400 {
+    color: #52525b !important;
+}
+
+html.light .text-zinc-500 {
+    color: #71717a !important;
+}
+
+html.light .text-zinc-600 {
+    color: #52525b !important;
+}
+
+html.light .bg-black\/60 {
+    background-color: rgba(185, 185, 185, 0.6) !important;
+}
+
+html.light .bg-zinc-900\/50 {
+    background-color: rgba(228, 228, 231, 0.5) !important;
+}
+
+html.light .fill-white {
+    fill: #18181b !important;
+}
+
+html.light .bg-white {
+    background-color: #18181b !important;
+}
+
+html.light .text-black {
+    color: #fafafa !important;
 }
