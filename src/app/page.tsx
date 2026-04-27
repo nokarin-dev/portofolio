@@ -69,6 +69,7 @@ const stackCategories = [
       { icon: "java", name: "Java" },
       { icon: "gradle", name: "Gradle" },
       { icon: "kotlin", name: "Kotlin" },
+      { icon: "rust", name: "Rust" },
     ],
   },
 ]
@@ -76,10 +77,18 @@ const stackCategories = [
 const projects = [
   {
     name: "FrameExtractor",
-    tech: "Flutter · Dart",
+    tech: "Flutter · Dart · Python · ffmpeg · yt-dlp",
     desc: "FrameExtractor is a modern, cross-platform video frame extractor with a clean UI built with Flutter, powered by ffmpeg and yt-dlp. Supports local video files and direct YouTube URL extraction.",
     href: "https://github.com/nokarin-dev/FrameExtractor",
     image: "https://github.com/user-attachments/assets/d458829a-c268-4590-911e-1e00fc964312?raw=true",
+    status: "public",
+  },
+  {
+    name: "Aqloss",
+    tech: "Flutter · Dart · Rust",
+    desc: "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
+    href: "https://github.com/nokarin-dev/Aqloss",
+    image: "https://github.com/nokarin-dev/Aqloss/blob/main/assets/banner/github_banner.png?raw=true",
     status: "public",
   },
   {
