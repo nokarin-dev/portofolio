@@ -10,7 +10,7 @@ import BackToTop from "@/components/back-to-top"
 import { Analytics } from "@vercel/analytics/next"
 import "@/css/globals.css"
 
-const BASE_URL = "https://nokarin.my.id"
+const BASE_URL = "https://nokarin.xyz"
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -58,9 +58,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    shortcut: "/favicon.png",
-    icon: "/favicon.png",
-    apple: "/favicon.png",
+    shortcut: "/favicon.ico",
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 }
 
@@ -70,7 +70,7 @@ const inter = Inter({
 })
 
 const calSans = LocalFont({
-  src: "../../public/fonts/CalSans-SemiBold.ttf",
+  src: "../../../public/fonts/CalSans-SemiBold.ttf",
   variable: "--font-calsans",
 })
 

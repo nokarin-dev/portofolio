@@ -107,11 +107,15 @@ html.light .text-zinc-600 {
 }
 
 html.light .bg-black\/60 {
-    background-color: rgba(185, 185, 185, 0.6) !important;
+    background-color: #b9b9b999 !important;
 }
 
 html.light .bg-zinc-900\/50 {
-    background-color: rgba(228, 228, 231, 0.5) !important;
+    background-color: #e4e4e780 !important;
+}
+
+html.light .bg-zinc-950\/50 {
+    background-color: color-mix(in oklab, var(--color-zinc-400) 50%, transparent);
 }
 
 html.light .fill-white {
@@ -124,4 +128,24 @@ html.light .bg-white {
 
 html.light .text-black {
     color: #fafafa !important;
+}
+
+html.light .border-zinc-900 {
+    border-color: var(--color-zinc-900);
+}
+
+html.light .to-black {
+    --tw-gradient-to: #dddddd;
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+}
+
+@property --tw-gradient-position {
+    syntax: "*";
+    inherits: false;
+}
+
+@property --tw-gradient-from {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #dddddd;
 }
