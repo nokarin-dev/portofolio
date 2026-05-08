@@ -40,6 +40,7 @@ export default function AqlossHeader() {
                         alt="Aqloss logo"
                         width={32}
                         height={32}
+                        priority
                     />
                     <span className="text-white font-semibold text-sm tracking-tight">Aqloss</span>
                 </a>
