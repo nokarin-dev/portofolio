@@ -256,8 +256,7 @@ export default function Home() {
             className="flex flex-col gap-4 sm:max-w-lg"
           >
             <p className="text-zinc-400 leading-relaxed text-sm sm:text-base">
-              Hi, I&apos;m <span className="text-white font-semibold">Rio</span> - also known as{" "}
-              <span className="text-white font-semibold">Nokarin</span>. I&apos;m a full-stack web
+              Hi, I&apos;m <span className="text-white font-semibold">Nokarin</span> a full-stack web
               developer from Indonesia with experience building modern and scalable web applications.
               Outside of web dev I also create apps, tools, game utilities, and various experimental
               tech ideas.
@@ -579,7 +578,7 @@ export default function Home() {
                         autoComplete="name"
                         value={formState.name}
                         onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                        placeholder="Rio"
+                        placeholder="Your Name"
                         aria-required="true"
                         className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
                       />

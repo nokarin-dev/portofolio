@@ -7,13 +7,13 @@ const BASE_URL = "https://nokarin.xyz/projects/aqloss"
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
     title: {
-        default: "Aqloss | Lossless everywhere",
+        default: "Aqloss | Audio, uncompromised",
         template: "%s | Aqloss",
     },
     description:
         "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
     keywords: ["Aqloss", "music player", "cross-platform", "lossless audio", "hi-res audio", "bit-perfect"],
-    authors: [{ name: "Rio (Nokarin)", url: BASE_URL }],
+    authors: [{ name: "Nokarin", url: BASE_URL }],
     creator: "Nokarin",
     openGraph: {
         title: "Aqloss | Lossless everywhere",

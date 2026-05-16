@@ -18,14 +18,14 @@ export const metadata: Metadata = {
         template: "%s | Nokarin",
     },
     description:
-        "Rio (Nokarin) - full-stack web developer from Indonesia, building modern and scalable web applications.",
+        "Nokarin - full-stack web developer from Indonesia, building modern and scalable web applications.",
     keywords: ["full-stack developer", "web developer", "Indonesia", "React", "Next.js", "nokarin"],
-    authors: [{ name: "Rio (Nokarin)", url: BASE_URL }],
+    authors: [{ name: "Nokarin", url: BASE_URL }],
     creator: "Nokarin",
     openGraph: {
         title: "Nokarin | Full-Stack Developer",
         description:
-            "Rio (Nokarin) - full-stack web developer from Indonesia, building modern and scalable web applications.",
+            "Nokarin - full-stack web developer from Indonesia, building modern and scalable web applications.",
         url: BASE_URL,
         siteName: BASE_URL,
         images: [
