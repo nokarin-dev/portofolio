@@ -110,7 +110,7 @@ const projects = [
   {
     name: "Celeris",
     tech: "React · TailwindCSS · Motion · Next-Auth",
-    desc: "Celeris delivers real-time visibility into build pipelines, CI/CD health, and key development metrics — built for speed, designed for devs.",
+    desc: "Celeris delivers real-time visibility into build pipelines, CI/CD health, and key development metrics - built for speed, designed for devs.",
     href: null,
     image: null,
     status: "private",

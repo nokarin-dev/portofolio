@@ -9,7 +9,8 @@ const NAV = [
     { label: "Features", href: "#features" },
     { label: "Platforms", href: "#platforms" },
     { label: "Specs", href: "#specs" },
-    { label: "Download", href: "#download" },
+    { label: "Roadmap", href: "/projects/aqloss/roadmap" },
+    { label: "Changelog", href: "/projects/aqloss/changelog" },
 ]
 
 export default function AqlossHeader() {

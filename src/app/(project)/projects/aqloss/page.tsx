@@ -10,7 +10,7 @@ import {
     CheckIcon, ZapIcon, ChevronRightIcon, InfoIcon, CopyIcon, CheckCircleIcon,
 } from "lucide-react"
 import Image from "next/image"
-import { FaAndroid, FaGithub, FaLinux, FaWindows } from "react-icons/fa"
+import { FaAndroid, FaApple, FaGithub, FaLinux, FaWindows } from "react-icons/fa"
 import { RiShiningFill } from "react-icons/ri"
 
 type OS = "windows" | "linux" | "android" | "unknown"
@@ -115,8 +115,8 @@ const PLATFORMS = [
 ]
 
 const PLATFORMS_PLANNED = [
-    { name: "macOS", sub: "Planned" },
-    { name: "iOS", sub: "Planned" },
+    { name: "macOS", icon: <FaApple />, sub: "Planned" },
+    { name: "iOS", icon: <FaApple />, sub: "Planned" },
 ]
 
 const FEATURES = [
@@ -907,8 +907,10 @@ export default function AqlossPage() {
                             </motion.span>
                         ))}
                         {PLATFORMS_PLANNED.map((p) => (
-                            <span key={p.name} role="listitem" className="text-xs text-zinc-700 border border-zinc-900 px-3 py-1 rounded-full">
-                                {p.name}<span className="ml-1.5 text-[10px] text-zinc-800">{p.sub}</span>
+                            <span key={p.name} role="listitem" className="flex items-center gap-1.5 text-xs text-zinc-700 border border-zinc-900 px-3 py-1 rounded-full">
+                                <span className="text-zinc-500" aria-hidden>{p.icon}</span>
+                                {p.name}
+                                <span className="ml-1.5 text-[10px] text-zinc-800">{p.sub}</span>
                             </span>
                         ))}
                     </div>
@@ -1108,7 +1110,9 @@ export default function AqlossPage() {
                             className="flex items-center gap-4 p-5 rounded-2xl border border-zinc-900/60 bg-zinc-950/20 cursor-not-allowed"
                             aria-label={`${p.name} - ${p.sub}`}
                         >
-                            <div aria-hidden className="w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0" />
+                            <div aria-hidden className="w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0 text-zinc-700" >
+                                {p.icon}
+                            </div>
                             <div>
                                 <div className="font-semibold text-zinc-700 text-sm">{p.name}</div>
                                 <div className="text-[11px] text-zinc-800 mt-0.5">{p.sub}</div>
