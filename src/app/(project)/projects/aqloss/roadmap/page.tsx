@@ -30,37 +30,43 @@ const ROADMAP: RoadmapMilestone[] = [
       {
         title: "Play history",
         description: "Record every track that is played along with its timestamp. You can filter by day or week.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · History",
       },
       {
         title: "Loved Tracks",
         description: "Like or dislike tracks from anywhere. Automatically syncs to Last.fm if scrobbling is enabled.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · Tracks",
       },
       {
         title: "Last.fm loved sync",
         description: "Sync your favorite tracks from Last.fm to your local device.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · Social",
+      },
+      {
+        title: "Export & Import playlist",
+        description: "Export and import playlists in .aqp format.",
+        status: "done",
+        category: "Library · Organization",
       },
       {
         title: "Queue Panel",
         description: "View and reorder the song queue right now directly from the sidebar, without opening another screen.",
-        status: "planned",
+        status: "in-progress",
         category: "Frontend · Queue",
       },
       {
         title: "Playlist Management Improvements",
-        description: "Rename, duplicate, export playlists as M3U. Import M3U/M3U8 files.",
-        status: "planned",
+        description: "Rename, duplicate, export playlists as aqp. Import aqp files.",
+        status: "in-progress",
         category: "Frontend · Playlist",
       },
       {
         title: "Global Search",
         description: "One search bar for tracks, albums, artists, and playlists all at once.",
-        status: "planned",
+        status: "in-progress",
         category: "Frontend · Search",
       },
       {
@@ -151,12 +157,6 @@ const ROADMAP: RoadmapMilestone[] = [
       {
         title: "Smart filter bar",
         description: "Filter the library by genre, year, format, and bit depth without going into the settings.",
-        status: "planned",
-        category: "Library · Organization",
-      },
-      {
-        title: "Export & Import playlist",
-        description: "Export and import playlists in .aqconfig format.",
         status: "planned",
         category: "Library · Organization",
       },
@@ -302,13 +302,13 @@ export default function AqlossRoadmapPage() {
     <main className="min-h-screen bg-black text-white px-5 sm:px-10 pt-28 pb-32">
       <div className="max-w-2xl mx-auto">
         {/* back */}
-        <Link
+        <a
           href="/projects/aqloss"
           className="inline-flex items-center gap-2 text-zinc-500 hover:text-white text-sm transition-colors mb-12"
         >
           <ArrowLeftIcon size={14} />
           Back to Aqloss
-        </Link>
+        </a>
 
         {/* header */}
         <motion.div

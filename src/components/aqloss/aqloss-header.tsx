@@ -6,9 +6,9 @@ import * as motion from "motion/react-client"
 import Image from "next/image"
 
 const NAV = [
-    { label: "Features", href: "#features" },
-    { label: "Platforms", href: "#platforms" },
-    { label: "Specs", href: "#specs" },
+    { label: "Features", href: "/projects/aqloss#features" },
+    { label: "Platforms", href: "/projects/aqloss#platforms" },
+    { label: "Specs", href: "/projects/aqloss/specs" },
     { label: "Roadmap", href: "/projects/aqloss/roadmap" },
     { label: "Changelog", href: "/projects/aqloss/changelog" },
 ]

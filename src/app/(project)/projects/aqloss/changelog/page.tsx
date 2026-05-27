@@ -1,6 +1,5 @@
 import { aqlossChangelog } from "@/lib/aqloss-changelog"
 import * as motion from "motion/react-client"
-import Link from "next/link"
 import { ArrowLeftIcon, ArrowUpRightIcon, GitBranchIcon } from "lucide-react"
 import type { Metadata } from "next"
 
@@ -30,13 +29,13 @@ export default function AqlossChangelogPage() {
         <main className="min-h-screen bg-black text-white px-5 sm:px-10 pt-28 pb-32">
             <div className="max-w-2xl mx-auto">
                 {/* back */}
-                <Link
+                <a
                     href="/projects/aqloss"
                     className="inline-flex items-center gap-2 text-zinc-500 hover:text-white text-sm transition-colors mb-12"
                 >
                     <ArrowLeftIcon size={14} />
                     Back to Aqloss
-                </Link>
+                </a>
 
                 {/* header */}
                 <motion.div
@@ -86,7 +85,7 @@ export default function AqlossChangelogPage() {
                                         aria-hidden
                                     />
 
-                                    <Link
+                                    <a
                                         href={`/projects/aqloss/changelog/v${release.version}`}
                                         className="group block"
                                     >
@@ -147,7 +146,7 @@ export default function AqlossChangelogPage() {
                                                 </div>
                                             )}
                                         </div>
-                                    </Link>
+                                    </a>
 
                                     {release.compareUrl && (
                                         <a

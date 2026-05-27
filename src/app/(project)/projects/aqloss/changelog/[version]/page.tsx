@@ -78,13 +78,13 @@ export default async function ChangelogVersionPage({ params }: Props) {
         <main className="min-h-screen bg-black text-white px-5 sm:px-10 pt-28 pb-32">
             <article className="max-w-2xl mx-auto">
                 {/* back */}
-                <Link
+                <a
                     href="/projects/aqloss/changelog"
                     className="inline-flex items-center gap-2 text-zinc-500 hover:text-white text-sm transition-colors mb-12"
                 >
                     <ArrowLeftIcon size={14} />
                     All releases
-                </Link>
+                </a>
 
                 {/* header */}
                 <motion.div
