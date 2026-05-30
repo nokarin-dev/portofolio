@@ -25,7 +25,7 @@ const ROADMAP: RoadmapMilestone[] = [
   {
     title: "v0.3.0",
     subtitle: "Queue & playlist overhaul",
-    status: "in-progress",
+    status: "done",
     items: [
       {
         title: "Play history",
@@ -54,38 +54,32 @@ const ROADMAP: RoadmapMilestone[] = [
       {
         title: "Queue Panel",
         description: "View and reorder the song queue right now directly from the sidebar, without opening another screen.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · Queue",
       },
       {
         title: "Playlist Management Improvements",
         description: "Rename, duplicate, export playlists as aqp. Import aqp files.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · Playlist",
       },
       {
         title: "Global Search",
         description: "One search bar for tracks, albums, artists, and playlists all at once.",
-        status: "in-progress",
+        status: "done",
         category: "Frontend · Search",
       },
       {
         title: "Artists screen",
         description: "A dedicated screen grouped by artist, complete with track count and total duration.",
-        status: "planned",
+        status: "done",
         category: "Frontend · Artists",
       },
       {
         title: "Play count & stats",
         description: "Track the number of times each track is played. Display this information in the track details and library sort.",
-        status: "planned",
+        status: "done",
         category: "Frontend · Stats",
-      },
-      {
-        title: "Customisable shortcuts",
-        description: "Users can remap all global shortcuts in the settings.",
-        status: "planned",
-        category: "Frontend · UI",
       },
     ],
   },
@@ -94,6 +88,12 @@ const ROADMAP: RoadmapMilestone[] = [
     subtitle: "No timeline yet",
     status: "planned",
     items: [
+      {
+        title: "Customisable shortcuts",
+        description: "Users can remap all global shortcuts in the settings.",
+        status: "planned",
+        category: "Frontend · UI",
+      },
       {
         title: "Parametric EQ",
         description: "Replace the 10-band graphic EQ with a parametric EQ - more control per band, Q factor, shelf filters.",
