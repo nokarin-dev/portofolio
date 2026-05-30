@@ -58,7 +58,7 @@ export async function getAqlossStats(): Promise<AqlossStats> {
         fetchFlathubDownloads(),
     ])
 
-    let version = "0.2.3"
+    let version = "0.3.0"
     let publishedAt: string | null = null
     let githubDownloads = 0
 
