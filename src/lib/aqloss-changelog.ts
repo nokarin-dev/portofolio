@@ -18,7 +18,7 @@ export const aqlossChangelog: ChangelogRelease[] = [
     {
         version: "0.3.0",
         date: "2026-05-30",
-        summary: "Update checker, media notifications, and a bunch of audio backend fixes. Also a big Flutter source restructure that was long overdue.",
+        summary: "History, artists, loved tracks, and a big batch of audio backend fixes and improvements. Also playlist import/export and Last.fm sync.",
         compareUrl: "https://github.com/nokarin-dev/Aqloss/compare/v0.2.3...v0.3.0",
         changes: [
             { type: "added", category: "Frontend", text: "History screen" },
