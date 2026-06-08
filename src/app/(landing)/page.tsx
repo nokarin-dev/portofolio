@@ -163,7 +163,7 @@ export default function Home() {
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className="relative flex flex-col items-center gap-4"
         >
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -176,7 +176,7 @@ export default function Home() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             Open to work
-          </motion.div>
+          </motion.div> */}
 
           <h1 className="text-7xl sm:text-8xl lg:text-9xl font-extrabold text-white tracking-tight">
             nokarin
