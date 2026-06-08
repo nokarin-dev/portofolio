@@ -10,12 +10,13 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-    return getAllVersions().map((v) => ({ version: `v${v}` }))
+    const versions = await getAllVersions()
+    return versions.map((v) => ({ version: `v${v}` }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { version } = await params
-    const release = getRelease(version.replace(/^v/, ""))
+    const release = await getRelease(version.replace(/^v/, ""))
     if (!release) return {}
     return {
         title: `v${release.version} | Aqloss Changelog`,
@@ -55,16 +56,15 @@ const TYPE_STYLE: Record<string, { badge: string; border: string; dot: string }>
 
 export default async function ChangelogVersionPage({ params }: Props) {
     const { version } = await params
-    const release = getRelease(version.replace(/^v/, ""))
+    const release = await getRelease(version.replace(/^v/, ""))
     if (!release) notFound()
 
-    const allVersions = getAllVersions()
+    const allVersions = await getAllVersions()
     const idx = allVersions.indexOf(release.version)
     const prevVersion = allVersions[idx - 1] ?? null
     const nextVersion = allVersions[idx + 1] ?? null
     const isLatest = idx === 0
 
-    // group changes by type
     const grouped: Record<string, typeof release.changes> = {}
     const order = ["added", "fixed", "changed", "removed"]
     for (const type of order) {
@@ -116,11 +116,11 @@ export default async function ChangelogVersionPage({ params }: Props) {
                         })}
                     </p>
 
-                    <p className="text-zinc-400 text-base leading-relaxed mb-8">
-                        {release.summary}
-                    </p>
+                    <p
+                        className="text-zinc-400 text-sm leading-relaxed mb-4"
+                        dangerouslySetInnerHTML={{ __html: release.summary }}
+                    />
 
-                    {/* stat pills */}
                     {stats.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-10">
                             {stats.map(({ type, count }) => (
@@ -189,7 +189,7 @@ export default async function ChangelogVersionPage({ params }: Props) {
                                                 {change.category}
                                             </p>
                                             <p className="text-sm text-zinc-300 leading-relaxed">
-                                                {change.text}
+                                                <span dangerouslySetInnerHTML={{ __html: change.text }} />
                                             </p>
                                         </div>
                                     ))}

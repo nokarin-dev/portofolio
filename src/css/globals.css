@@ -139,6 +139,10 @@ html.light .to-black {
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 
+code {
+    @apply bg-zinc-800/60 font-mono text-xs px-1.5 py-0.5 rounded border border-zinc-700/50;
+}
+
 @property --tw-gradient-position {
     syntax: "*";
     inherits: false;

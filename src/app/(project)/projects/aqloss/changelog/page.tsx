@@ -1,4 +1,4 @@
-import { aqlossChangelog } from "@/lib/aqloss-changelog"
+import { getChangelog } from "@/lib/aqloss-changelog"
 import * as motion from "motion/react-client"
 import { ArrowLeftIcon, ArrowUpRightIcon, GitBranchIcon } from "lucide-react"
 import type { Metadata } from "next"
@@ -22,8 +22,9 @@ const TYPE_DOT: Record<string, string> = {
     removed: "bg-red-400",
 }
 
-export default function AqlossChangelogPage() {
-    const latest = aqlossChangelog[0]
+export default async function AqlossChangelogPage() {
+    const changelog = await getChangelog()
+    const latest = changelog[0]
 
     return (
         <main className="min-h-screen bg-black text-white px-5 sm:px-10 pt-28 pb-32">
@@ -52,17 +53,16 @@ export default function AqlossChangelogPage() {
                     </h1>
                     <p className="text-zinc-500 text-sm leading-relaxed max-w-md">
                         Every release, what changed, what broke, what got fixed. Latest is{" "}
-                        <span className="text-zinc-300 font-mono">v{latest.version}</span>.
+                        <span className="text-zinc-300 font-mono">v{latest?.version}</span>.
                     </p>
                 </motion.div>
 
                 {/* timeline */}
                 <div className="relative">
-                    {/* vertical line */}
                     <div className="absolute left-1.75 top-2 bottom-2 w-px bg-zinc-900" aria-hidden />
 
                     <div className="flex flex-col gap-0">
-                        {aqlossChangelog.map((release, i) => {
+                        {changelog.map((release, i) => {
                             const isLatest = i === 0
                             const addedCount = release.changes.filter((c) => c.type === "added").length
                             const fixedCount = release.changes.filter((c) => c.type === "fixed").length
@@ -116,9 +116,10 @@ export default function AqlossChangelogPage() {
                                                 />
                                             </div>
 
-                                            <p className="text-zinc-400 text-sm leading-relaxed mb-4">
-                                                {release.summary}
-                                            </p>
+                                            <p
+                                                className="text-zinc-400 text-sm leading-relaxed mb-4"
+                                                dangerouslySetInnerHTML={{ __html: release.summary }}
+                                            />
 
                                             {release.changes.length > 0 && (
                                                 <div className="flex items-center gap-4 text-[11px]">
