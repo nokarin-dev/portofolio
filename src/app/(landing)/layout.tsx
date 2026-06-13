@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | Nokarin",
   },
   description:
-    "okarin - full-stack web developer from Indonesia, building modern and scalable web applications.",
+    "Nokarin - full-stack web developer from Indonesia, building modern and scalable web applications.",
   keywords: ["full-stack developer", "web developer", "Indonesia", "React", "Next.js", "nokarin"],
   authors: [{ name: "Nokarin", url: BASE_URL }],
   creator: "Nokarin",
@@ -29,14 +29,6 @@ export const metadata: Metadata = {
       "Nokarin - full-stack web developer from Indonesia, building modern and scalable web applications.",
     url: BASE_URL,
     siteName: BASE_URL,
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "Nokarin - Full-Stack Developer",
-      },
-    ],
     locale: "en-US",
     type: "website",
   },
@@ -44,7 +36,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Nokarin | Full-Stack Developer",
     description: "Full-stack web developer from Indonesia",
-    images: ["/og.png"],
   },
   robots: {
     index: true,
@@ -58,9 +49,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    shortcut: "/favicon.ico",
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
+    shortcut: "https://nokarin.xyz/favicon.ico",
+    icon: "https://nokarin.xyz/favicon.ico",
+    apple: "https://nokarin.xyz/favicon.ico",
   },
 }
 

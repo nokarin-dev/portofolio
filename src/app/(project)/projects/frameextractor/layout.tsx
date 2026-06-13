@@ -19,14 +19,14 @@ export const metadata: Metadata = {
         title: "FrameExtractor | Extract frames from any video",
         description: "Cross-platform frame extractor. Flutter UI, FFmpeg + yt-dlp powered. Local files and YouTube URLs.",
         url: BASE_URL,
-        images: [{ url: "/projects/frameextractor/og.png", width: 1280, height: 640 }],
+        images: [{ url: "https://nokarin.xyz/projects/frameextractor/og.png", width: 1280, height: 640 }],
         type: "website",
     },
     twitter: {
         card: "summary_large_image",
         title: "FrameExtractor | Extract frames from any video",
         description: "Cross-platform frame extractor. Flutter UI, FFmpeg + yt-dlp powered.",
-        images: ["/projects/frameextractor/og.png"],
+        images: ["https://nokarin.xyz/projects/frameextractor/og.png"],
     },
     robots: {
         index: true,
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
         },
     },
     icons: {
-        shortcut: "/projects/frameextractor/favicon.ico",
-        icon: "/projects/frameextractor/favicon.ico",
-        apple: "/projects/frameextractor/favicon.ico",
+        shortcut: "https://nokarin.xyz/projects/frameextractor/favicon.ico",
+        icon: "https://nokarin.xyz/projects/frameextractor/favicon.ico",
+        apple: "https://nokarin.xyz/projects/frameextractor/favicon.ico",
     },
 }
 

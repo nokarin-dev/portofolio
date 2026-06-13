@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         siteName: BASE_URL,
         images: [
             {
-                url: "/projects/aqloss/og.png",
+                url: "https://nokarin.xyz/projects/aqloss/og.png",
                 width: 1280,
                 height: 640,
                 alt: "Aqloss | Lossless everywhere",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Aqloss | Lossless everywhere",
         description: "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
-        images: ["/projects/aqloss/og.png"],
+        images: ["https://nokarin.xyz/projects/aqloss/og.png"],
     },
     robots: {
         index: true,
@@ -50,9 +50,9 @@ export const metadata: Metadata = {
         },
     },
     icons: {
-        shortcut: "/projects/aqloss/favicon.ico",
-        icon: "/projects/aqloss/favicon.ico",
-        apple: "/projects/aqloss/favicon.ico",
+        shortcut: "https://nokarin.xyz/projects/aqloss/favicon.ico",
+        icon: "https://nokarin.xyz/projects/aqloss/favicon.ico",
+        apple: "https://nokarin.xyz/projects/aqloss/favicon.ico",
     },
 }
 
