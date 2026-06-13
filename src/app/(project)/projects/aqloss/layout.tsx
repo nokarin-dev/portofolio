@@ -24,8 +24,8 @@ export const metadata: Metadata = {
         images: [
             {
                 url: "/projects/aqloss/og.png",
-                width: 1200,
-                height: 630,
+                width: 1280,
+                height: 640,
                 alt: "Aqloss | Lossless everywhere",
             },
         ],

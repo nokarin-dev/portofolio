@@ -9,6 +9,7 @@ import {
     PackageIcon, ArchiveIcon, BoxIcon, ChevronDownIcon,
     CheckIcon, ZapIcon, ChevronRightIcon, InfoIcon, CopyIcon,
     CheckCircleIcon, ArrowUpRightIcon, ClockIcon, TagIcon,
+    CircleAlertIcon,
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,7 +18,7 @@ import { RiShiningFill } from "react-icons/ri"
 import type { AqlossStats } from "@/lib/aqloss-stats"
 
 // Types
-type OS = "windows" | "linux" | "android" | "unknown"
+type OS = "windows" | "linux" | "android" | "ios" | "macos" | "unknown"
 type LinuxPkgFormat = "deb" | "rpm" | "appimage" | null
 
 type DownloadOption = {
@@ -111,17 +112,41 @@ const DOWNLOAD_TARGETS: DownloadTarget[] = [
             },
         ],
     },
+    {
+        name: "iOS", icon: <FaApple />, os: "ios",
+        options: [
+            {
+                label: "Installer", description: "For most modern iOS devices (64-bit ARM).",
+                icon: <PackageIcon size={16} />, filename: "Aqloss-ios.ipa",
+                href: "https://github.com/nokarin-dev/aqloss/releases/latest/download/Aqloss-ios.ipa",
+                tag: "Most common",
+            },
+        ],
+    },
+    {
+        name: "MacOS", icon: <FaApple />, os: "macos",
+        options: [
+            {
+                label: "Installer", description: "For most modern macOS devices (64-bit ARM).",
+                icon: <PackageIcon size={16} />, filename: "Aqloss-macos.zip",
+                href: "https://github.com/nokarin-dev/aqloss/releases/latest/download/Aqloss-macos.zip",
+                tag: "Recommended",
+            },
+            {
+                label: "Portable", description: "No installation needed. Extract and run anywhere.",
+                icon: <ArchiveIcon size={16} />, filename: "Aqloss-macos-portable.zip",
+                href: "https://github.com/nokarin-dev/aqloss/releases/latest/download/Aqloss-macos-portable.zip",
+            },
+        ],
+    },
 ]
 
 const PLATFORMS = [
     { name: "Windows", icon: <FaWindows />, sub: "WASAPI Exclusive", stable: true, detail: "Bit-perfect output via WASAPI Exclusive Mode - bypasses OS audio mixer entirely when the device supports it." },
     { name: "Linux", icon: <FaLinux />, sub: "CPAL (ALSA / PipeWire)", stable: true, detail: "Uses CPAL for cross-distro compatibility. Audio passes through PipeWire or ALSA depending on your system." },
     { name: "Android", icon: <FaAndroid />, sub: "CPAL (AAudio)", stable: true, detail: "AAudio via CPAL for low-latency output on Android 8.0+. Mixed output through the OS audio stack." },
-]
-
-const PLATFORMS_PLANNED = [
-    { name: "macOS", icon: <FaApple />, sub: "Planned" },
-    { name: "iOS", icon: <FaApple />, sub: "Planned" },
+    { name: "macOS", icon: <FaApple />, sub: "Core Audio", stable: false, detail: "Targeting Core Audio for native performance and bit-perfect output. No timeline for release yet." },
+    { name: "iOS", icon: <FaApple />, sub: "AVAudio", stable: false, detail: "Targeting Core Audio for native performance and bit-perfect output. No timeline for release yet." },
 ]
 
 const FEATURES = [
@@ -149,7 +174,7 @@ const FORMATS_TICKER = ["FLAC", "WAV", "AIFF", "ALAC", "MP3", "AAC", "OGG Vorbis
 const FAQ_ITEMS = [
     { q: "Is Aqloss truly bit-perfect?", a: "On Windows with a compatible DAC/driver, yes. WASAPI Exclusive Mode bypasses the OS mixer entirely. On Linux and Android, audio passes through the OS stack (ALSA/PipeWire or AAudio), so some mixing may occur." },
     { q: "Does it support DSD?", a: "Not currently. Symphonia, the Rust decoder library Aqloss is built on, does not yet support DSD (SACD/DSF/DFF). PCM up to 32-bit / 384 kHz is fully supported." },
-    { q: "Why is the app unsigned?", a: "Code signing certificates cost money and require a registered legal entity. Aqloss is a free, open-source project — all source code is auditable on GitHub so you can verify it yourself instead of trusting a signature." },
+    { q: "Why is the app unsigned?", a: "Code signing certificates cost money and require a registered legal entity. Aqloss is a free, open-source project - all source code is auditable on GitHub so you can verify it yourself instead of trusting a signature." },
     { q: "Does it send any data over the network?", a: "Only if you enable Last.fm scrobbling, which requires your explicit opt-in and credentials. There is no telemetry, no crash reporting, and no analytics of any kind." },
     { q: "What about macOS and iOS support?", a: "Both are planned. macOS requires Apple Developer Program membership for distribution, and iOS has additional sandbox constraints. Contributions via GitHub are welcome." },
 ]
@@ -233,7 +258,6 @@ function useScrollProgress() {
     return pct
 }
 
-// Animate number counting up
 function useCountUp(target: number, duration = 1200) {
     const [value, setValue] = useState(0)
     const [started, setStarted] = useState(false)
@@ -360,12 +384,8 @@ function OSRecommendBadge({ os, hint }: { os: OS; hint: string | null }) {
     )
 }
 
-// Live Stats Bar
-interface LiveStatsBannerProps {
-    stats: AqlossStats
-}
-
-function LiveStatsBanner({ stats }: LiveStatsBannerProps) {
+// Live Stats Banner
+function LiveStatsBanner({ stats }: { stats: AqlossStats }) {
     const ref = useRef<HTMLDivElement>(null)
     const [visible, setVisible] = useState(false)
 
@@ -399,32 +419,25 @@ function LiveStatsBanner({ stats }: LiveStatsBannerProps) {
             className="w-full max-w-3xl mx-auto mt-10"
         >
             <div className="grid grid-cols-3 divide-x divide-zinc-900 rounded-2xl border border-zinc-900 bg-zinc-950/60 backdrop-blur-sm overflow-hidden">
-                {/* Total */}
                 <div className="flex flex-col items-center gap-1 py-4 px-4">
                     <span className="text-2xl sm:text-3xl font-bold text-white tabular-nums tracking-tight">
-                        {stats.totalDownloads > 0 ? formatDownloads(totalCount.value) : "—"}
+                        {stats.totalDownloads > 0 ? formatDownloads(totalCount.value) : "-"}
                     </span>
                     <span className="text-[10px] text-zinc-600 uppercase tracking-widest">Total downloads</span>
                 </div>
-
-                {/* GitHub */}
                 <div className="flex flex-col items-center gap-1 py-4 px-4">
                     <span className="text-2xl sm:text-3xl font-bold text-zinc-300 tabular-nums tracking-tight">
-                        {stats.githubDownloads > 0 ? formatDownloads(ghCount.value) : "—"}
+                        {stats.githubDownloads > 0 ? formatDownloads(ghCount.value) : "-"}
                     </span>
                     <span className="text-[10px] text-zinc-600 uppercase tracking-widest">GitHub releases</span>
                 </div>
-
-                {/* Flathub */}
                 <div className="flex flex-col items-center gap-1 py-4 px-4">
                     <span className="text-2xl sm:text-3xl font-bold text-zinc-300 tabular-nums tracking-tight">
-                        {stats.flathubDownloads > 0 ? formatDownloads(flatCount.value) : "—"}
+                        {stats.flathubDownloads > 0 ? formatDownloads(flatCount.value) : "-"}
                     </span>
                     <span className="text-[10px] text-zinc-600 uppercase tracking-widest">Flathub</span>
                 </div>
             </div>
-
-            {/* version + changelog link */}
             <div className="flex items-center justify-center gap-3 mt-3">
                 <div className="flex items-center gap-1.5 text-[11px] text-zinc-600">
                     <TagIcon size={10} />
@@ -435,9 +448,7 @@ function LiveStatsBanner({ stats }: LiveStatsBannerProps) {
                             <ClockIcon size={10} />
                             <span>
                                 {new Date(stats.publishedAt).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
+                                    month: "short", day: "numeric", year: "numeric",
                                 })}
                             </span>
                         </>
@@ -448,8 +459,7 @@ function LiveStatsBanner({ stats }: LiveStatsBannerProps) {
                     href="/projects/aqloss/changelog"
                     className="inline-flex items-center gap-1 text-[11px] text-zinc-600 hover:text-zinc-300 transition-colors"
                 >
-                    Changelog
-                    <ArrowUpRightIcon size={10} />
+                    Changelog <ArrowUpRightIcon size={10} />
                 </Link>
             </div>
         </motion.div>
@@ -525,10 +535,16 @@ function PlatformCard({ p, i }: { p: typeof PLATFORMS[0]; i: number }) {
                 <p className="font-semibold text-sm text-white">{p.name}</p>
                 <p className="text-[11px] text-zinc-600 font-mono mt-0.5">{p.sub}</p>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 font-medium tracking-wide uppercase">
-                <CheckIcon size={10} className="stroke-[2.5]" aria-hidden />
-                Stable
-            </div>
+            {p.stable ?
+                <span key={i} className="flex items-center gap-1.5 text-[10px] text-emerald-600 font-medium tracking-wide uppercase">
+                    <CheckIcon size={10} className="stroke-[2.5]" aria-hidden />
+                    Stable
+                </span> :
+                <span key={i} className="flex items-center gap-1.5 text-[10px] text-amber-600 font-medium tracking-wide uppercase">
+                    <CircleAlertIcon size={10} className="stroke-[2.5]" aria-hidden />
+                    Not Stable
+                </span>
+            }
             <button
                 onMouseEnter={() => setTip(true)}
                 onMouseLeave={() => setTip(false)}
@@ -632,7 +648,7 @@ function FormatTicker() {
     )
 }
 
-// FAQ
+// FAQ Section
 function FAQSection() {
     const [openIdx, setOpenIdx] = useState<number | null>(null)
     return (
@@ -823,7 +839,7 @@ function DownloadModal({ target, onClose, detectedOS, linuxPreference }: {
                             className="overflow-hidden"
                         >
                             <div className="mx-3 mb-1 p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
-                                <p className="text-[11px] text-zinc-500 mb-2.5 leading-relaxed">Your distro wasn't detected. Pick your package format to get the right recommendation:</p>
+                                <p className="text-[11px] text-zinc-500 mb-2.5 leading-relaxed">Your distro wasn't detected. Pick your package format:</p>
                                 <div className="flex gap-2 flex-wrap">
                                     {([
                                         { fmt: "deb", label: ".deb", sub: "Ubuntu / Debian" },
@@ -834,7 +850,6 @@ function DownloadModal({ target, onClose, detectedOS, linuxPreference }: {
                                             key={fmt}
                                             onClick={() => savePkgFormat(fmt)}
                                             className="flex-1 min-w-0 flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg border border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800 text-zinc-400 hover:text-white transition focus:outline-none focus:ring-1 focus:ring-zinc-500"
-                                            aria-label={`Use ${label} packages`}
                                         >
                                             <span className="text-xs font-semibold font-mono">{label}</span>
                                             <span className="text-[10px] text-zinc-600">{sub}</span>
@@ -893,11 +908,7 @@ function DownloadModal({ target, onClose, detectedOS, linuxPreference }: {
 }
 
 // Main Page
-interface AqlossPageClientProps {
-    stats: AqlossStats
-}
-
-export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
+export default function AqlossPageClient({ stats }: { stats: AqlossStats }) {
     const [activeSpec, setActiveSpec] = useState<number | null>(null)
     const [downloadTarget, setDownloadTarget] = useState<DownloadTarget | null>(null)
     const { os: detectedOS, hint: osHint, pkgFormat: uaFormat } = useDetectedOS()
@@ -924,21 +935,22 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                 <div aria-hidden className="absolute bottom-0 inset-x-0 h-48 bg-linear-to-t from-black to-transparent pointer-events-none" />
 
                 <motion.div
-                    initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 28 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
                     className="relative z-10 text-center max-w-3xl"
                 >
-                    {/* badge */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, scale: 0.88 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.1, duration: 0.5 }}
                         className="inline-flex items-center gap-2.5 border border-zinc-800 rounded-full px-4 py-1.5 mb-4 bg-zinc-950/60 backdrop-blur-md"
                     >
                         <Image
                             className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800"
-                            src="/projects/aqloss/og.png"
+                            src="/projects/aqloss/icon.png"
                             alt="Aqloss logo"
-                            width={14} height={14} priority
+                            width={24} height={24} priority
                         />
                         <span className="text-xs text-zinc-400 font-medium tracking-wide">Aqloss</span>
                         <span className="w-px h-4 bg-zinc-800" aria-hidden />
@@ -972,37 +984,32 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                         </MagneticButton>
                     </div>
 
-                    {/* platform pills */}
                     <div className="flex flex-wrap gap-2 justify-center mt-8" role="list" aria-label="Supported platforms">
                         {PLATFORMS.map((p, i) => (
                             <motion.span
                                 key={p.name}
                                 role="listitem"
-                                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.45 + i * 0.07 }}
                                 className="flex items-center gap-1.5 text-xs text-zinc-400 border border-zinc-800 px-3 py-1 rounded-full hover:border-zinc-600 hover:text-zinc-200 transition cursor-default"
                             >
                                 <span className="text-zinc-500" aria-hidden>{p.icon}</span>
                                 {p.name}
-                                <span className="w-1 h-1 rounded-full bg-emerald-600" aria-label="stable" />
+                                <span className={`w-1 h-1 rounded-full ${p.stable ? "bg-emerald-600" : "bg-zinc-700"}`} aria-label={p.stable ? "stable" : "planned"} />
                             </motion.span>
-                        ))}
-                        {PLATFORMS_PLANNED.map((p) => (
-                            <span key={p.name} role="listitem" className="text-xs text-zinc-700 border border-zinc-900 px-3 py-1 rounded-full">
-                                {p.name}<span className="ml-1.5 text-[10px] text-zinc-800">{p.sub}</span>
-                            </span>
                         ))}
                     </div>
 
-                    {/* OS detect badge */}
                     <div className="flex justify-center mt-5">
                         <OSRecommendBadge os={detectedOS} hint={osHint} />
                     </div>
                 </motion.div>
 
-                {/* app screenshot */}
+                {/* screenshot */}
                 <motion.div
-                    initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     className="relative z-10 w-full mt-16 max-w-5xl"
                 >
@@ -1017,7 +1024,6 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                     </div>
                     <div aria-hidden className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black rounded-xl pointer-events-none" />
 
-                    {/* stat badges */}
                     <div className="absolute bottom-6 inset-x-0 flex gap-3 flex-wrap justify-center px-4">
                         {[
                             { value: "384 kHz", label: "Max sample rate", delay: 0.7 },
@@ -1039,7 +1045,6 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                     </div>
                 </motion.div>
 
-                {/* Live download stats */}
                 <div className="relative z-10 w-full px-0 sm:px-6 max-w-5xl">
                     <LiveStatsBanner stats={stats} />
                 </div>
@@ -1088,13 +1093,6 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                     <div className="grid sm:grid-cols-3 gap-3 max-w-xl mx-auto">
                         {PLATFORMS.map((p, i) => <PlatformCard key={p.name} p={p} i={i} />)}
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-5 justify-center">
-                        {PLATFORMS_PLANNED.map((p) => (
-                            <span key={p.name} className="text-xs text-zinc-700 border border-zinc-900 px-4 py-1.5 rounded-full font-mono">
-                                {p.name} — {p.sub}
-                            </span>
-                        ))}
-                    </div>
                     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mt-8 max-w-lg mx-auto">
                         <div className="flex gap-2 p-3.5 rounded-xl bg-zinc-950 border border-zinc-900" role="note">
                             <ZapIcon size={14} className="text-amber-700 shrink-0 mt-0.5" aria-hidden />
@@ -1132,7 +1130,7 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                             <HeadphonesIcon size={22} className="text-zinc-500" aria-hidden />
                         </div>
                         <blockquote className="text-2xl sm:text-3xl font-light text-zinc-300 leading-relaxed">
-                            &ldquo;The signal path should do as little as possible between the file and your ears — and be honest about what it does.&rdquo;
+                            &ldquo;The signal path should do as little as possible between the file and your ears - and be honest about what it does.&rdquo;
                         </blockquote>
                         <div className="flex items-center justify-center gap-2 mt-8" aria-hidden>
                             <div className="h-px w-8 bg-zinc-800" />
@@ -1154,7 +1152,9 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                     <p className="text-zinc-500 mt-3 text-sm">Free and open source. No account required.</p>
                     {detectedOS !== "unknown" && (
                         <motion.p
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
                             className="text-xs text-zinc-600 mt-2 flex items-center gap-1.5"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" aria-hidden />
@@ -1202,29 +1202,16 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                         )
                     })}
 
-                    {PLATFORMS_PLANNED.map((p, i) => (
-                        <motion.div
-                            key={p.name}
-                            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                            transition={{ duration: 0.4, delay: (DOWNLOAD_TARGETS.length + i) * 0.07 }}
-                            className="flex items-center gap-4 p-5 rounded-2xl border border-zinc-900/60 bg-zinc-950/20 cursor-not-allowed"
-                            aria-label={`${p.name} — ${p.sub}`}
-                        >
-                            <div aria-hidden className="w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-900 flex items-center justify-center shrink-0" />
-                            <div>
-                                <div className="font-semibold text-zinc-700 text-sm">{p.name}</div>
-                                <div className="text-[11px] text-zinc-800 mt-0.5">{p.sub}</div>
-                            </div>
-                        </motion.div>
-                    ))}
-
                     <motion.a
                         href="https://github.com/nokarin-dev/Aqloss"
                         target="_blank"
                         rel="noopener noreferrer"
-                        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -3, transition: { duration: 0.2 } }} whileTap={{ scale: 0.97 }}
-                        viewport={{ once: true }} transition={{ duration: 0.4, delay: 0.42 }}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                        whileTap={{ scale: 0.97 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.42 }}
                         className="group flex items-center gap-4 p-5 rounded-2xl border border-zinc-800 hover:border-zinc-600 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors focus:outline-none focus:ring-1 focus:ring-zinc-600"
                     >
                         <div aria-hidden className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-zinc-200 group-hover:border-zinc-700 transition shrink-0">
@@ -1245,7 +1232,7 @@ export default function AqlossPageClient({ stats }: AqlossPageClientProps) {
                     <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
                         <div className="inline-flex items-center gap-2.5 mb-5">
                             <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-                                <Image className="w-6 h-6 rounded-md" src="/projects/aqloss/og.png" alt="Aqloss logo" width={15} height={15} priority />
+                                <Image className="w-6 h-6 rounded-md" src="/projects/aqloss/icon.png" alt="Aqloss logo" width={24} height={24} />
                             </div>
                             <span className="text-white font-semibold text-sm">Aqloss</span>
                         </div>

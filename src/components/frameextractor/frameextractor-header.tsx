@@ -3,17 +3,17 @@
 import { useState, useEffect } from "react"
 import { MenuIcon, XIcon, DownloadIcon } from "lucide-react"
 import * as motion from "motion/react-client"
+import { FilmIcon } from "lucide-react"
 import Image from "next/image"
 
 const NAV = [
-    { label: "Features", href: "/projects/aqloss#features" },
-    { label: "Platforms", href: "/projects/aqloss#platforms" },
-    { label: "Specs", href: "/projects/aqloss#specs" },
-    { label: "Roadmap", href: "/projects/aqloss/roadmap" },
-    { label: "Changelog", href: "/projects/aqloss/changelog" },
+    { label: "Features", href: "/projects/frameextractor#features" },
+    { label: "Stack", href: "/projects/frameextractor#stack" },
+    { label: "Build", href: "/projects/frameextractor#build" },
+    { label: "FAQ", href: "/projects/frameextractor#faq" },
 ]
 
-export default function AqlossHeader() {
+export default function FrameExtractorHeader() {
     const [scrolled, setScrolled] = useState(false)
     const [open, setOpen] = useState(false)
 
@@ -33,20 +33,20 @@ export default function AqlossHeader() {
                     : "border border-transparent"
                     }`}
             >
-                {/* Logo */}
-                <a href="/projects/aqloss" className="flex items-center gap-2.5 group">
-                    <Image
-                        className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800"
-                        src="/projects/aqloss/icon.png"
-                        alt="Aqloss logo"
-                        width={32}
-                        height={32}
-                        priority
-                    />
-                    <span className="text-white font-semibold text-sm tracking-tight">Aqloss</span>
+                <a href="/projects/frameextractor" className="flex items-center gap-2.5 group">
+                    <div className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-zinc-300 transition">
+                        <Image
+                            className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800"
+                            src="/projects/frameextractor/icon.png"
+                            alt="FrameExtractor logo"
+                            width={10}
+                            height={10}
+                            priority
+                        />
+                    </div>
+                    <span className="text-white font-semibold text-sm tracking-tight">FrameExtractor</span>
                 </a>
 
-                {/* Nav */}
                 <nav className="flex items-center gap-1 text-sm">
                     {NAV.map((link) => (
                         <a
@@ -59,16 +59,13 @@ export default function AqlossHeader() {
                     ))}
                 </nav>
 
-                {/* CTA */}
-                <div className="flex items-center gap-2">
-                    <a
-                        href="#download"
-                        className="flex items-center gap-1.5 bg-white text-black text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-zinc-200 transition"
-                    >
-                        <DownloadIcon size={13} />
-                        Download
-                    </a>
-                </div>
+                <a
+                    href="#download"
+                    className="flex items-center gap-1.5 bg-white text-black text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-zinc-200 transition"
+                >
+                    <DownloadIcon size={13} />
+                    Download
+                </a>
             </div>
 
             {/* Mobile */}
@@ -78,20 +75,17 @@ export default function AqlossHeader() {
                     : "border border-transparent"
                     }`}
             >
-                <a href="/projects/aqloss" className="flex items-center gap-2">
-                    <Image
-                        className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800"
-                        src="/projects/aqloss/icon.png"
-                        alt="Aqloss logo"
-                        width={32}
-                        height={32}
-                    />
-                    <span className="text-white font-semibold text-sm">Aqloss</span>
+                <a href="/projects/frameextractor" className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-500">
+                        <FilmIcon size={13} />
+                    </div>
+                    <span className="text-white font-semibold text-sm">FrameExtractor</span>
                 </a>
                 <button
                     onClick={() => setOpen((v) => !v)}
                     className="text-zinc-400 hover:text-white transition"
                     aria-label="Toggle menu"
+                    aria-expanded={open}
                 >
                     {open ? <XIcon size={20} /> : <MenuIcon size={20} />}
                 </button>
