@@ -8,7 +8,7 @@ import {
 import { FaDiscord } from "react-icons/fa"
 import Image from "next/image"
 
-const INVITE_URL = "https://discord.com/oauth2/authorize?client_id=1519991195005095966&permissions=8&scope=bot%20applications.commands"
+const INVITE_URL = "https://discord.com/oauth2/authorize?client_id=1519991195005095966"
 const SUPPORT_URL = "https://discord.gg/SPttF24Wjp"
 
 
