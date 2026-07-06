@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import type { ReactNode } from "react"
 import "@/css/globals.css"
 
 const BASE_URL = "https://nokarin.xyz/projects/cyris"
@@ -6,18 +7,18 @@ const BASE_URL = "https://nokarin.xyz/projects/cyris"
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
     title: {
-        default: "Cyris | Discord Bot",
+        default: "Cyris | All-in-One Discord Bot",
         template: "%s | Cyris",
     },
     description:
-        "Cyris is a feature-rich Discord bot with YouTube & Spotify support, audio filters, lyrics, and more.",
-    keywords: ["Cyris", "Discord bot", "utility", "moderation", "fun", "economy", "music bot", "Discord", "YouTube", "Spotify", "nokarin"],
+        "Cyris is an all-in-one Discord bot: Tic-Tac-Toe with global matchmaking, an economy with Safe-Rollback betting, leveling with rank cards, music, and full moderation.",
+    keywords: ["Cyris", "Discord bot", "multipurpose bot", "economy", "leveling", "rank card", "music bot", "moderation", "tic-tac-toe", "matchmaking", "nokarin"],
     authors: [{ name: "Nokarin", url: BASE_URL }],
     creator: "Nokarin",
     openGraph: {
-        title: "Cyris | Discord Bot",
+        title: "Cyris | All-in-One Discord Bot",
         description:
-            "Feature-rich Discord bot with YouTube & Spotify support, audio filters, lyrics, and more.",
+            "Games, economy, leveling, music, and moderation - one Discord bot for your server's entire social layer.",
         url: BASE_URL,
         siteName: "Nokarin",
         images: [
@@ -33,9 +34,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Cyris | Discord Bot",
+        title: "Cyris | All-in-One Discord Bot",
         description:
-            "Feature-rich Discord bot with YouTube & Spotify support, audio filters, lyrics, and more.",
+            "Games, economy, leveling, music, and moderation - one Discord bot for your server's entire social layer.",
         images: ["https://nokarin.xyz/projects/cyris/og.png"],
     },
     robots: {
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
 export default function CyrisLayout({
     children,
 }: Readonly<{
-    children: React.ReactNode
+    children: ReactNode
 }>) {
     return <>{children}</>
 }

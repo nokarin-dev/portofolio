@@ -1,17 +1,18 @@
 import * as motion from "motion/react-client"
 import { ArrowLeftIcon, LockIcon } from "lucide-react"
 import type { Metadata } from "next"
+import type { ReactNode } from "react"
 
 export const metadata: Metadata = {
     title: "Privacy Policy | Cyris",
-    description: "Privacy Policy for Cyris - what data is collected, how it's used, and how to request deletion.",
+    description: "Privacy Policy for Cyris - what data is stored, how it's used, and how to request deletion.",
 }
 
-const EFFECTIVE_DATE = "July 1, 2026"
+const EFFECTIVE_DATE = "July 6, 2026"
 
 interface Section {
     title: string
-    body: React.ReactNode
+    body: ReactNode
 }
 
 const sections: Section[] = [
@@ -19,41 +20,69 @@ const sections: Section[] = [
         title: "1. Overview",
         body: (
             <p>
-                This Privacy Policy explains what information Cyris collects, how it is used, and the
+                This Privacy Policy explains what information Cyris stores, how it is used, and the
                 choices you have regarding your data. Nokarin is committed to handling your data
-                responsibly and transparently. Cyris is designed to collect the absolute minimum
-                information necessary to function.
+                responsibly and transparently. Cyris uses a MongoDB database to persistently store the
+                information described below, only to the extent required to provide its moderation,
+                economy, leveling, music, and matchmaking features.
             </p>
         ),
     },
     {
-        title: "2. Information We Collect",
+        title: "2. Information We Store",
         body: (
             <div className="space-y-4">
-                <p>Cyris collects and temporarily processes the following data during operation:</p>
+                <p>To function, Cyris persistently stores the following data in its database:</p>
 
                 <div className="space-y-3">
                     <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
-                        <p className="text-zinc-300 text-xs font-medium mb-1">User IDs</p>
+                        <p className="text-zinc-300 text-xs font-medium mb-1">Discord User ID</p>
                         <p className="text-zinc-500 text-xs leading-relaxed">
-                            Your Discord user ID is stored temporarily in-memory to attribute song
-                            requests to the requester within the queue display. This data is never
-                            persisted to a database and is discarded when the bot leaves a voice channel.
+                            Your numeric Discord user ID is stored to attribute your coin balance,
+                            inventory, level/XP progress, and matchmaking queue entries to you. This is an
+                            identifier, not your Discord username, avatar, or any other profile
+                            information - none of which Cyris stores.
                         </p>
                     </div>
                     <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
-                        <p className="text-zinc-300 text-xs font-medium mb-1">Guild (Server) IDs</p>
+                        <p className="text-zinc-300 text-xs font-medium mb-1">Discord Server (Guild) ID</p>
                         <p className="text-zinc-500 text-xs leading-relaxed">
-                            Guild IDs are used to manage per-server queue state in memory. Like user IDs,
-                            this data is not persisted and is cleared when playback ends or the bot disconnects.
+                            Used to keep leveling progress, server-scoped matchmaking, and server
+                            configuration (prefix, welcome messages, moderation settings) separate between
+                            servers.
                         </p>
                     </div>
                     <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
-                        <p className="text-zinc-300 text-xs font-medium mb-1">Command Content</p>
+                        <p className="text-zinc-300 text-xs font-medium mb-1">Server Configuration & Moderation Settings</p>
                         <p className="text-zinc-500 text-xs leading-relaxed">
-                            Search queries and song URLs passed to Cyris are processed to fulfill your
-                            request and are not logged or stored. They may be forwarded to third-party
-                            services (YouTube, Spotify, Genius) solely to retrieve the requested content.
+                            Settings a server administrator configures: the command prefix, welcome/leave
+                            channel and message text, autorole, starboard threshold, the member verification
+                            panel, and the moderation log channel used to record moderation actions. This is
+                            server-level configuration, not personal data about individual members.
+                        </p>
+                    </div>
+                    <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
+                        <p className="text-zinc-300 text-xs font-medium mb-1">Economy & Inventory Data</p>
+                        <p className="text-zinc-500 text-xs leading-relaxed">
+                            Wallet and bank coin balances, your shop inventory (items and quantities owned),
+                            cooldown timestamps (e.g. for daily rewards), and premium code status, where
+                            applicable.
+                        </p>
+                    </div>
+                    <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
+                        <p className="text-zinc-300 text-xs font-medium mb-1">XP & Leveling Data</p>
+                        <p className="text-zinc-500 text-xs leading-relaxed">
+                            XP and level per server, used to determine your rank and to render your rank
+                            card image on request.
+                        </p>
+                    </div>
+                    <div className="rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3">
+                        <p className="text-zinc-300 text-xs font-medium mb-1">Global Matchmaking Queue</p>
+                        <p className="text-zinc-500 text-xs leading-relaxed">
+                            While you are queued for a match - server-scoped or global - Cyris stores your
+                            user ID, the queue scope, the channel and message the queue entry belongs to,
+                            and any coin wager tied to it, so an opponent can be matched against you. This
+                            entry is temporary; see Section 6 for how long it is kept.
                         </p>
                     </div>
                 </div>
@@ -67,12 +96,11 @@ const sections: Section[] = [
                 <p className="mb-3">Cyris does not collect, store, or process the following:</p>
                 <ul className="list-none space-y-2 pl-4 border-l border-zinc-800">
                     {[
-                        "Message content beyond direct bot commands.",
-                        "Voice audio, recordings, or transcriptions.",
-                        "Personal information such as names, email addresses, or IP addresses.",
-                        "Server member lists or role data.",
-                        "Usage analytics, behavioural data, or activity logs.",
-                        "Payment information of any kind.",
+                        "The content of your regular messages. Only the command text you send to Cyris is read, and only to parse the command itself.",
+                        "Voice audio, recordings, or transcriptions - including from music playback sessions.",
+                        "Personal information such as your real name, email address, or IP address.",
+                        "Payment or financial information. Cyris's coin economy is a virtual, in-bot currency with no real-world monetary value and no connection to any payment method.",
+                        "Analytics, behavioral tracking, or advertising identifiers.",
                     ].map((item) => (
                         <li key={item} className="text-zinc-400 text-sm flex gap-3">
                             <span className="text-zinc-600 mt-0.5 shrink-0">-</span>
@@ -87,99 +115,93 @@ const sections: Section[] = [
         title: "4. How We Use Your Information",
         body: (
             <p>
-                The limited data Cyris handles is used exclusively to provide the requested service -
-                playing music, displaying queue information, and attributing track requests within a
-                session. No data is sold, rented, shared with advertisers, or used for any commercial
-                purpose whatsoever.
+                The data described above is used exclusively to operate Cyris&apos;s features: applying
+                moderation settings a server administrator has configured, settling wagers correctly,
+                keeping your economy balance and level progress persistent between sessions, matching you
+                with an opponent through the matchmaking queue, and rendering your rank card. Nokarin does
+                not sell, rent, trade, or share this data with advertisers or any third party for marketing
+                purposes, and does not use it for any purpose beyond operating the bot.
             </p>
         ),
     },
     {
-        title: "5. Third-Party Services",
+        title: "5. Image Generation (Rank Cards)",
         body: (
-            <div className="space-y-3">
-                <p>
-                    To retrieve audio streams, metadata, and lyrics, Cyris forwards search queries and
-                    URLs to the following third-party services. Each operates under its own privacy policy:
-                </p>
-                <ul className="list-none space-y-2 pl-4 border-l border-zinc-800">
-                    {[
-                        { name: "YouTube", url: "https://policies.google.com/privacy" },
-                        { name: "Spotify", url: "https://www.spotify.com/legal/privacy-policy/" },
-                        { name: "Genius", url: "https://genius.com/static/privacy" },
-                    ].map(({ name, url }) => (
-                        <li key={name} className="text-zinc-400 text-sm flex gap-3">
-                            <span className="text-zinc-600 mt-0.5 shrink-0">-</span>
-                            <span>
-                                {name} -{" "}
-                                <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-zinc-400 underline underline-offset-2 hover:text-white transition-colors"
-                                >
-                                    Privacy Policy
-                                </a>
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-                <p className="text-zinc-500 text-sm">
-                    Nokarin has no control over and assumes no responsibility for the data practices of
-                    these third-party services.
-                </p>
-            </div>
+            <p>
+                Rank cards are generated on demand using the <code>@napi-rs/canvas</code> library, which
+                draws the image directly from the level/XP data already stored (see Section 2) together
+                with your Discord avatar and display name at the moment the card is requested. This
+                rendering happens locally within Cyris&apos;s own process - no image is sent to a
+                third-party service to be generated, and generated card images themselves are not stored;
+                a new one is drawn each time the command is used.
+            </p>
         ),
     },
     {
         title: "6. Data Retention",
         body: (
-            <p>
-                Cyris operates statelessly with respect to persistent storage. All in-memory session data
-                (user IDs, guild IDs, queue state) is automatically purged when a playback session ends
-                - either when the queue is exhausted, the bot is disconnected from a voice channel, or
-                the bot process restarts. There is no database; there is nothing to delete.
-            </p>
+            <div className="space-y-3">
+                <p>
+                    Economy, leveling, inventory, and server configuration data - including moderation
+                    settings - is retained for as long as Cyris remains in your server or you continue
+                    using the bot, so that your progress, balance, and configuration persist correctly
+                    between sessions.
+                </p>
+                <p>
+                    Global matchmaking queue entries are temporary: an entry is automatically and
+                    permanently deleted by the database after 5 minutes if no opponent is found, or
+                    immediately once a match starts or you leave the queue.
+                </p>
+                <p>
+                    If Cyris is removed from your server, that server&apos;s configuration and server-scoped
+                    data are no longer used by the bot. You may request full deletion of your data at any
+                    time - see Section 8.
+                </p>
+            </div>
         ),
     },
     {
         title: "7. Data Security",
         body: (
             <p>
-                Because Cyris does not persist any personal data to disk or a database, the attack
-                surface for data exposure is minimal. Communication between Cyris and Discord is handled
-                over Discord&apos;s encrypted WebSocket gateway. Communication with third-party APIs
-                (YouTube, Spotify, Genius) occurs over HTTPS.
+                Data is stored in a MongoDB database accessed only by Cyris&apos;s own backend. Communication
+                between Cyris and Discord is handled over Discord&apos;s encrypted WebSocket gateway and
+                HTTPS API. Access to the database is restricted to the bot&apos;s operator; it is never made
+                publicly accessible, and Discord user IDs are never published or exposed alongside any
+                other identifying information.
             </p>
         ),
     },
     {
-        title: "8. Children's Privacy",
-        body: (
-            <p>
-                Cyris is not directed at children under the age of 13. We do not knowingly collect any
-                information from children. If you believe a child has provided personal data through use
-                of this bot, please contact us and the relevant session data will be confirmed as
-                non-persistent and already discarded.
-            </p>
-        ),
-    },
-    {
-        title: "9. Your Rights",
+        title: "8. Your Rights & Data Deletion",
         body: (
             <div className="space-y-3">
                 <p>
-                    Depending on your jurisdiction, you may have the right to access, correct, or request
-                    deletion of personal data held about you. Because Cyris holds no persistent personal
-                    data, these rights are satisfied by design.
+                    You may request access to, correction of, or complete deletion of the data Cyris holds
+                    about your Discord user ID at any time by contacting us through the channels in Section
+                    11. Deletion requests are honored by permanently removing your economy, inventory, and
+                    leveling records from the database.
                 </p>
                 <p>
                     If you are located in the European Economic Area (EEA), you have rights under the
-                    General Data Protection Regulation (GDPR). If you are a California resident, you have
-                    rights under the California Consumer Privacy Act (CCPA). In both cases, the absence of
-                    persistent data storage means there is no stored personal data to act upon.
+                    General Data Protection Regulation (GDPR), including the right to access, rectify, and
+                    erase your personal data. If you are a California resident, you have rights under the
+                    California Consumer Privacy Act (CCPA), including the right to know what data is
+                    collected and to request its deletion. Nokarin honors these rights for all users
+                    regardless of jurisdiction.
                 </p>
             </div>
+        ),
+    },
+    {
+        title: "9. Children's Privacy",
+        body: (
+            <p>
+                Cyris is not directed at children under the age of 13, and use of the bot requires meeting
+                the minimum age set out in our Terms of Service. We do not knowingly collect data from
+                children under this age. If you believe a child has used Cyris in violation of this
+                policy, please contact us so the associated data can be reviewed and deleted.
+            </p>
         ),
     },
     {
@@ -188,8 +210,8 @@ const sections: Section[] = [
             <p>
                 This Privacy Policy may be updated from time to time. The effective date at the top of
                 this page will reflect any changes. Continued use of Cyris after updates are posted
-                constitutes acceptance of the revised policy. Material changes will be announced in
-                the Cyris support server where possible.
+                constitutes acceptance of the revised policy. Material changes will be announced in the
+                Cyris support server where possible.
             </p>
         ),
     },
@@ -197,8 +219,8 @@ const sections: Section[] = [
         title: "11. Contact",
         body: (
             <p>
-                For any questions, concerns, or requests related to this Privacy Policy, please reach
-                out via the{" "}
+                For any questions, concerns, or data deletion requests related to this Privacy Policy,
+                please reach out via the{" "}
                 <a
                     href="https://discord.gg/SPttF24Wjp"
                     target="_blank"
@@ -249,7 +271,7 @@ export default function CyrisPolicyPage() {
                         Privacy Policy
                     </h1>
                     <p className="text-zinc-500 text-sm leading-relaxed max-w-md">
-                        What data Cyris collects, how it&apos;s used, and your rights. Effective{" "}
+                        What data Cyris stores, how it&apos;s used, and your rights. Effective{" "}
                         <span className="text-zinc-300">{EFFECTIVE_DATE}</span>.
                     </p>
                 </motion.div>
@@ -263,9 +285,9 @@ export default function CyrisPolicyPage() {
                 >
                     <p className="text-[11px] tracking-[0.15em] uppercase text-zinc-600 mb-2">TL;DR</p>
                     <p className="text-zinc-300 text-sm leading-relaxed">
-                        Cyris stores nothing. User IDs and queue data live in memory only for the duration
-                        of a session and are discarded the moment playback ends. No database, no logs,
-                        no analytics.
+                        Cyris stores your Discord user ID and server ID in a MongoDB database to run its
+                        moderation, economy, leveling, and matchmaking features. We never sell your data,
+                        never share it with advertisers, and you can request full deletion at any time.
                     </p>
                 </motion.div>
 
