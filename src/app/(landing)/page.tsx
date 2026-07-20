@@ -1,31 +1,41 @@
 "use client"
 
+import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import * as motion from "motion/react-client"
+import { useMotionValue, useSpring, useTransform } from "motion/react"
+import {
+  Code2Icon,
+  ArrowUpRightIcon,
+  LockIcon,
+  SendIcon,
+} from "lucide-react"
+
 import Particle from "@/components/particle"
 import Typewriter from "@/components/typewriter"
 import StatsCounter from "@/components/stats-counter"
 import GithubStats from "@/components/github-stats"
 import SkillBars from "@/components/skill-bars"
 import ProjectImage from "@/components/project-image"
-import {
-  Code2Icon,
-  StarsIcon,
-  ArrowUpRightIcon,
-  LockIcon,
-  MailIcon,
-  MapPinIcon,
-  SendIcon,
-  BookOpenIcon,
-  BarChart2Icon,
-} from "lucide-react"
-import * as motion from "motion/react-client"
-import Image from "next/image"
-import Link from "next/link"
-import { useState } from "react"
 import { blogPosts } from "@/lib/blog"
+import { cn } from "@/lib/utils"
+
+const GithubSVG = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+  </svg>
+)
+
+const LinkedinSVG = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+  </svg>
+)
 
 const stackCategories = [
   {
-    label: "FRONTEND",
+    label: "Frontend",
     items: [
       { icon: "js", name: "JavaScript" },
       { icon: "ts", name: "TypeScript" },
@@ -35,87 +45,175 @@ const stackCategories = [
     ],
   },
   {
-    label: "BACKEND",
+    label: "Backend",
     items: [
       { icon: "nodejs", name: "Node.js" },
       { icon: "expressjs", name: "Express.js" },
       { icon: "fastapi", name: "FastAPI" },
       { icon: "laravel", name: "Laravel" },
+      { icon: "python", name: "Python" },
     ],
   },
   {
-    label: "DATABASE",
+    label: "Database & Tools",
     items: [
       { icon: "mysql", name: "MySQL" },
       { icon: "mongodb", name: "MongoDB" },
-    ],
-  },
-  {
-    label: "TOOLS",
-    items: [
-      { icon: "vscode", name: "VS Code" },
-      { icon: "idea", name: "IntelliJ IDEA" },
-      { icon: "rider", name: "Rider" },
-      { icon: "git", name: "Git" },
       { icon: "docker", name: "Docker" },
+      { icon: "git", name: "Git" },
+      { icon: "vscode", name: "VSCode" },
+      { icon: "idea", name: "IntelliJ IDEA" },
+      { icon: "figma", name: "Figma" },
     ],
   },
   {
-    label: "OTHER",
+    label: "Systems & Apps",
     items: [
       { icon: "flutter", name: "Flutter" },
       { icon: "dart", name: "Dart" },
-      { icon: "python", name: "Python" },
-      { icon: "java", name: "Java" },
-      { icon: "gradle", name: "Gradle" },
-      { icon: "kotlin", name: "Kotlin" },
       { icon: "rust", name: "Rust" },
+      { icon: "java", name: "Java" },
+      { icon: "cpp", name: "CPP" },
+      { icon: "cs", name: "CSharp" },
     ],
   },
 ]
 
 const projects = [
   {
-    name: "FrameExtractor",
-    tech: "Flutter · Dart · Python · ffmpeg · yt-dlp",
-    desc: "FrameExtractor is a modern, cross-platform video frame extractor with a clean UI built with Flutter, powered by ffmpeg and yt-dlp. Supports local video files and direct YouTube URL extraction.",
-    href: "https://github.com/nokarin-dev/FrameExtractor",
-    image: "https://github.com/user-attachments/assets/d458829a-c268-4590-911e-1e00fc964312?raw=true",
+    name: "Cyris",
+    tech: ["JavaScript", "ExpressJS", "DiscordJS"],
+    desc: "Cyris is engineered for enterprise scale Discord servers. Five powerful systems sharing one robust core. No clutter, just performance.",
+    href: "https://cyris.nokarin.xyz",
+    image: '/projects/cyris/banner.png',
     status: "public",
+    featured: true,
   },
   {
     name: "Aqloss",
-    tech: "Flutter · Dart · Rust",
-    desc: "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
+    tech: ["Flutter", "Dart", "Rust"],
+    desc: "Cross-platform music player architected strictly for bit-perfect, lossless, and hi-res audio playback.",
     href: "/projects/aqloss",
     image: "https://github.com/nokarin-dev/Aqloss/blob/main/assets/banner/github_banner.png?raw=true",
     status: "public",
+    featured: true,
   },
   {
     name: "HorizonUI",
-    tech: "Java · Gradle",
-    desc: "HorizonUI Bring a modern, clean, and customizable user interface to Minecraft. HorizonUI focuses on visual clarity, animated backgrounds, and layout refinement to deliver a fresh and immersive UI experience.",
+    tech: ["Java", "Gradle"],
+    desc: "Brings a modern, clean, and highly customizable glassmorphic user interface to Minecraft with animated backgrounds.",
     href: "https://github.com/nokarin-dev/HorizonUI",
     image: "https://github.com/nokarin-dev/horizonui/blob/main/assets/HorizonUI_Banner.png?raw=true",
     status: "public",
+    featured: false,
   },
   {
-    name: "Lancer",
-    tech: "React · TailwindCSS · Motion · FastAPI",
-    desc: "Lancer is the all-in-one API analytics and quota manager made for developers. Track usage, set limits, and never lose control of your endpoints again.",
-    href: null,
-    image: null,
-    status: "private",
-  },
-  {
-    name: "Celeris",
-    tech: "React · TailwindCSS · Motion · Next-Auth",
-    desc: "Celeris delivers real-time visibility into build pipelines, CI/CD health, and key development metrics - built for speed, designed for devs.",
-    href: null,
-    image: null,
-    status: "private",
+    name: "FrameExtractor",
+    tech: ["Flutter", "Dart", "Python", "ffmpeg", "yt-dlp"],
+    desc: "Modern, cross-platform video frame extractor with a clean GUI. Engineered for high-precision local extraction and direct YouTube processing.",
+    href: "https://github.com/nokarin-dev/FrameExtractor",
+    image: "https://github.com/user-attachments/assets/d458829a-c268-4590-911e-1e00fc964312?raw=true",
+    status: "public",
+    featured: false,
   },
 ]
+
+const NoiseOverlay = () => (
+  <div
+    className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay"
+    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+  />
+)
+
+function ProjectCard({ project, index }: { project: any, index: number }) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const mouseXSpring = useSpring(x)
+  const mouseYSpring = useSpring(y)
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"])
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"])
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const width = rect.width; const height = rect.height
+    const mouseX = e.clientX - rect.left; const mouseY = e.clientY - rect.top
+    x.set(mouseX / width - 0.5); y.set(mouseY / height - 0.5)
+  }
+  const handleMouseLeave = () => { x.set(0); y.set(0) }
+
+  const CardInner = () => (
+    <motion.div
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
+      className={cn(
+        "group relative flex flex-col h-full rounded-2xl overflow-hidden",
+        "bg-white/2 backdrop-blur-xl border border-white/5",
+        "hover:bg-white/4 hover:border-white/10 transition-all duration-500",
+        project.featured && "md:col-span-2 md:flex-row md:items-center"
+      )}
+    >
+      <div className={cn("flex flex-col flex-1 p-8 md:p-10 z-10", project.featured && "md:w-1/2")}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-2xl tracking-tight text-zinc-100 group-hover:text-white transition-colors">
+            {project.name}
+          </h3>
+          {project.status === "public" ? (
+            <ArrowUpRightIcon size={20} className="text-zinc-500 group-hover:text-white transition-colors" />
+          ) : (
+            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-mono px-3 py-1 rounded-full bg-white/3 text-zinc-500 border border-white/5">
+              <LockIcon size={10} /> Private
+            </div>
+          )}
+        </div>
+        <p className="text-sm md:text-base text-zinc-400 leading-relaxed mb-6 font-light">
+          {project.desc}
+        </p>
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {project.tech.map((t: string) => (
+            <span key={t} className="text-[11px] uppercase tracking-wider font-mono px-3 py-1.5 rounded-md bg-white/3 text-zinc-300 border border-white/5">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className={cn(
+        "shrink-0 z-10 flex items-center justify-center",
+        project.featured
+          ? "w-full md:w-1/2 h-64 md:h-full p-8 pt-0 md:p-10 md:pl-0"
+          : "w-full h-50 p-8 pt-0 md:p-10 md:pt-0"
+      )}>
+        {project.image ? (
+          <div className="w-full h-full rounded-xl overflow-hidden border border-white/5 relative shadow-2xl">
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
+            <ProjectImage src={project.image} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center items-center gap-3 w-full h-full bg-white/1 rounded-xl border border-white/5">
+            <LockIcon size={24} className="text-zinc-700" />
+            <span className="text-zinc-600 text-xs font-mono tracking-widest uppercase">Internal Build</span>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-100px" }}
+      style={{ perspective: "1000px" }}
+      className={cn(project.featured && "md:col-span-2")}
+    >
+      {project.href ? (
+        <a href={project.href} target="_blank" rel="noopener noreferrer" className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-2xl">
+          <CardInner />
+        </a>
+      ) : <CardInner />}
+    </motion.div>
+  )
+}
 
 export default function Home() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" })
@@ -125,21 +223,19 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSending(true)
-    setSendError("")
+    if (!formState.name || !formState.email || !formState.message) {
+      setSendError("All fields are required."); return;
+    }
+    setSending(true); setSendError("")
     try {
       const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formState),
       })
       if (!res.ok) throw new Error("Failed")
-      setSent(true)
-    } catch {
-      setSendError("Something went wrong. Please try again.")
-    } finally {
-      setSending(false)
-    }
+      setSent(true); setFormState({ name: "", email: "", message: "" })
+    } catch { setSendError("Transmission failed. Please try again.") }
+    finally { setSending(false) }
   }
 
   const latestPosts = [...blogPosts]
@@ -147,510 +243,310 @@ export default function Home() {
     .slice(0, 3)
 
   return (
-    <>
-      {/* Hero */}
-      <section
-        id="hero"
-        className="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden border-b border-zinc-900"
-        aria-label="Hero"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(120,120,120,0.15),transparent)]" />
-        <Particle className="absolute inset-0" quantity={120} />
+    <div className="bg-black text-zinc-300 selection:bg-white/20 `select`ion:text-white min-h-screen">
+      <NoiseOverlay />
+
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-white/2 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-zinc-500/2 rounded-full blur-[100px]" />
+      </div>
+
+      <section id="hero" className="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden z-10">
+        <Particle className="absolute inset-0 opacity-50" quantity={120} ease={80} />
 
         <motion.div
-          initial={{ opacity: 0, filter: "blur(12px)", scale: 0.92 }}
-          animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="relative flex flex-col items-center gap-4"
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="relative flex flex-col items-center text-center px-5"
         >
-          {/* <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            role="status"
-            aria-label="Currently open to work"
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 text-emerald-400 text-xs font-medium mb-2"
-          >
-            <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            Open to work
-          </motion.div> */}
-
-          <h1 className="text-7xl sm:text-8xl lg:text-9xl font-extrabold text-white tracking-tight">
+          <h1 className="text-6xl sm:text-8xl lg:text-9xl font-bold text-white tracking-tighter leading-none mb-6">
             nokarin
           </h1>
 
-          <div className="text-sm sm:text-base text-zinc-400 tracking-tight h-6" aria-live="polite">
+          <div className="text-base sm:text-lg text-zinc-400 font-light tracking-wide h-8 max-w-2xl" aria-live="polite">
             <Typewriter
               phrases={[
-                "Full-stack web developer",
-                "Building modern & scalable apps",
-                "Based in Indonesia 🇮🇩",
-                "Open to collaborations",
+                "Full-stack engineering & system architecture.",
+                "Crafting modern UIs with pixel-perfect precision.",
+                "Specializing in Next.js, Flutter, and Rust.",
+                "Building tools for the modern developer.",
               ]}
             />
+          </div>
+
+          <div className="mt-14 flex flex-wrap justify-center gap-5 px-6 font-mono uppercase tracking-widest text-xs">
+            <a href="#projects" className="px-8 py-4 rounded-lg bg-white text-black font-semibold hover:bg-zinc-200 transition-colors duration-300">
+              Explore Work
+            </a>
+            <a href="#contact" className="px-8 py-4 rounded-lg border border-white/20 text-white hover:bg-white/5 transition-colors duration-300">
+              Initialize Contact
+            </a>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-10 flex flex-wrap justify-center gap-3 px-6 z-1"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="absolute bottom-12 flex flex-col items-center gap-3 text-zinc-600"
         >
-          <a href="#about" className="px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-300 text-sm hover:border-zinc-500 hover:text-white transition-all">
-            About me
-          </a>
-          <a href="#projects" className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-semibold hover:bg-zinc-200 transition-all">
-            View projects
-          </a>
-          <a href="#contact" className="px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-300 text-sm hover:border-zinc-500 hover:text-white transition-all">
-            Contact
-          </a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          aria-hidden="true"
-          className="absolute bottom-8 flex flex-col items-center gap-1 text-zinc-600 text-xs"
-        >
-          <span>scroll</span>
-          <motion.div
-            animate={{ translateY: [0, 6, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            className="w-px h-6 bg-zinc-600"
-          />
+          <div className="w-px h-12 bg-linear-to-b from-zinc-800 to-transparent relative overflow-hidden">
+            <motion.div
+              animate={{ y: [-24, 48] }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              className="w-full h-6 bg-white absolute top-0"
+            />
+          </div>
         </motion.div>
       </section>
 
-      {/* Stats */}
-      <section className="border-b border-zinc-900" aria-label="Quick stats">
+      <section className="relative z-10 border-y border-white/5 bg-black/40 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-5 sm:px-10 py-16">
           <StatsCounter />
         </div>
       </section>
 
-      {/* About */}
-      <section id="about" aria-labelledby="about-heading" className="py-24 sm:py-32 px-5 sm:px-10 max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-8 w-full">
-          <motion.h2
-            id="about-heading"
-            initial={{ opacity: 0, translateX: -20 }}
-            whileInView={{ opacity: 1, translateX: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="text-3xl sm:text-4xl font-extrabold text-white shrink-0"
-          >
-            ABOUT ME
-          </motion.h2>
+      <section id="about" className="py-32 px-5 sm:px-10 max-w-7xl mx-auto relative z-10">
+        <div className="grid lg:grid-cols-12 gap-16 items-start">
 
           <motion.div
-            initial={{ opacity: 0, translateX: 20 }}
-            whileInView={{ opacity: 1, translateX: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="flex flex-col gap-4 sm:max-w-lg"
+            initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="lg:col-span-5 lg:sticky lg:top-32"
           >
-            <p className="text-zinc-400 leading-relaxed text-sm sm:text-base">
-              Hi, I&apos;m <span className="text-white font-semibold">Nokarin</span> a full-stack web
-              developer from Indonesia with experience building modern and scalable web applications.
-              Outside of web dev I also create apps, tools, game utilities, and various experimental
-              tech ideas.
+            <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-4">
+              <span className="w-8 h-px bg-zinc-600 block"></span> About
+            </h2>
+            <h3 className="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-[1.1] mb-8">
+              Engineering <br /> <span className="text-zinc-500">Digital Reality.</span>
+            </h3>
+            <p className="text-zinc-400 leading-relaxed text-lg font-light mb-8">
+              Hi, I&apos;m Nokarin. I specialize in bridging the gap between highly complex backend systems and intuitive, glassmorphic front-end experiences.
             </p>
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2 text-zinc-500 text-sm">
-                <MapPinIcon size={14} aria-hidden="true" />
-                <span>Indonesia</span>
-              </div>
-              <div className="flex gap-3">
-                <a
-                  href="https://github.com/nokarin-dev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub: nokarin-dev"
-                  className="flex items-center gap-2 text-zinc-400 fill-zinc-400 hover:fill-white hover:text-white text-sm transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 30 30" aria-hidden="true">
-                    <path d="M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z"></path>
-                  </svg>
-                  <span>nokarin-dev</span>
-                </a>
-              </div>
+            <p className="text-zinc-400 leading-relaxed text-lg font-light">
+              Currently based in <span className="text-white">Indonesia</span>, my focus lies in crafting scalable web applications, robust desktop tools, and experimenting with systems programming.
+            </p>
+
+            <div className="mt-12 pt-8 border-t border-white/5 flex items-center gap-6">
+              <a href="https://github.com/nokarin-dev" target="_blank" aria-label="GitHub" className="text-zinc-500 hover:text-white transition-colors p-3 rounded-full bg-white/2 border border-white/5 hover:bg-white/5">
+                <GithubSVG className="w-5 h-5" />
+              </a>
+              <a href="https://linkedin.com/in/nokarin" target="_blank" aria-label="LinkedIn" className="text-zinc-500 hover:text-white transition-colors p-3 rounded-full bg-white/2 border border-white/5 hover:bg-white/5">
+                <LinkedinSVG className="w-5 h-5" />
+              </a>
             </div>
           </motion.div>
-        </div>
 
-        {/* Skill bars */}
-        <div className="mt-20 w-full">
-          <motion.div
-            initial={{ opacity: 0, translateX: -20 }}
-            whileInView={{ opacity: 1, translateX: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="flex items-center gap-3"
-          >
-            <BarChart2Icon className="text-white" size={20} aria-hidden="true" />
-            <h3 className="text-xl font-bold text-white">SKILL LEVELS</h3>
-          </motion.div>
-          <SkillBars />
-        </div>
-
-        {/* Stack icons */}
-        <div className="mt-24 w-full">
-          <motion.div
-            initial={{ opacity: 0, translateX: -20 }}
-            whileInView={{ opacity: 1, translateX: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="flex items-center gap-3 mb-12"
-          >
-            <Code2Icon className="text-white" size={20} aria-hidden="true" />
-            <h3 className="text-xl font-bold text-white">MY STACK</h3>
-          </motion.div>
-
-          <div className="flex flex-col gap-14">
-            {stackCategories.map((cat) => (
-              <div key={cat.label} className="flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:gap-5 text-white">
-                <motion.p
-                  initial={{ opacity: 0, translateY: 10 }}
-                  whileInView={{ opacity: 1, translateY: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  viewport={{ amount: 0.5, margin: "-60px" }}
-                  className="sm:col-span-5 text-lg font-extrabold text-zinc-500 sm:text-zinc-300 uppercase tracking-widest"
-                >
-                  {cat.label}
-                </motion.p>
-                <div className="sm:col-span-7 flex flex-wrap gap-x-8 gap-y-5">
-                  {cat.items.map((item, i) => (
-                    <motion.div
-                      key={item.icon}
-                      initial={{ opacity: 0, translateY: 16 }}
-                      whileInView={{ opacity: 1, translateY: 0 }}
-                      transition={{ duration: 0.4, delay: i * 0.06, ease: "easeInOut" }}
-                      viewport={{ amount: 0.5, margin: "-40px" }}
-                      className="flex items-center gap-3 text-base group hover:scale-105 transition-transform duration-500"
-                    >
-                      <Image
-                        src={`https://skillicons.dev/icons?i=${item.icon}`}
-                        alt={item.name}
-                        width={40}
-                        height={40}
-                        unoptimized
-                        className="transition-transform group-hover:scale-110"
-                      />
-                      <span className="text-zinc-300 group-hover:text-white transition-colors">
-                        {item.name}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Projects */}
-      <section id="projects" aria-labelledby="projects-heading" className="bg-zinc-950 py-24 sm:py-32 border-t border-zinc-800">
-        <div className="max-w-7xl mx-auto px-5 sm:px-10 w-full text-white">
-          <motion.div
-            initial={{ opacity: 0, translateX: -20 }}
-            whileInView={{ opacity: 1, translateX: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="flex items-center gap-3 mb-4"
-          >
-            <StarsIcon className="text-white" size={20} aria-hidden="true" />
-            <h2 id="projects-heading" className="text-xl font-bold">MY PROJECTS</h2>
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="text-zinc-500 text-sm mb-14 ml-8"
-          >
-            A selection of things I&apos;ve built
-          </motion.p>
-
-          <div className="flex flex-col w-full">
-            {projects.map((project, i) => {
-              const Inner = (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.08, ease: "easeInOut" }}
-                  viewport={{ amount: 0.5, margin: "-60px" }}
-                  className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 p-5 rounded-xl transition-colors duration-500 hover:bg-zinc-900/50"
-                >
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                      <p className="font-extrabold text-2xl sm:text-4xl tracking-tight">{project.name}</p>
-                      {project.status === "public" ? (
-                        <ArrowUpRightIcon size={18} className="text-zinc-500 shrink-0 mt-1" aria-hidden="true" />
-                      ) : (
-                        <span className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-500 mt-1">private</span>
-                      )}
-                    </div>
-                    <p className="text-sm text-zinc-500">{project.tech}</p>
-                    <p className="text-sm text-zinc-400 max-w-sm">{project.desc}</p>
-                  </div>
-                  <div className="shrink-0">
-                    {project.image ? (
-                      <ProjectImage src={project.image} alt={`${project.name} preview`} className="w-full sm:w-80" />
-                    ) : (
-                      <div className="flex flex-col justify-center items-center gap-2 w-full sm:w-80 h-28 bg-zinc-900 rounded-xl border border-zinc-800" aria-label="Preview not available">
-                        <LockIcon size={22} className="text-zinc-600" aria-hidden="true" />
-                        <span className="text-zinc-600 text-xs">Coming soon</span>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )
-              return (
-                <div key={i} className="border-b border-zinc-800/60 py-1">
-                  {project.href ? (
-                    <a href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.name} on GitHub`}>
-                      {Inner}
-                    </a>
-                  ) : <div>{Inner}</div>}
-                </div>
-              )
-            })}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="mt-12 flex justify-center"
-          >
-            <a
-              href="https://github.com/nokarin-dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="View more projects on GitHub"
-              className="flex items-center gap-2 px-6 py-3 rounded-full border border-zinc-700 text-zinc-300 fill-zinc-300 text-sm hover:fill-white hover:border-zinc-400 hover:text-white transition-all group"
+          <div className="lg:col-span-7 flex flex-col gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true, margin: "-100px" }}
+              className="p-8 sm:p-10 rounded-2xl bg-white/2 backdrop-blur-xl border border-white/5"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 30 30" aria-hidden="true">
-                <path d="M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z"></path>
-              </svg>
-              <span>See more on GitHub</span>
-              <ArrowUpRightIcon size={14} className="text-zinc-600 group-hover:text-zinc-300 transition-colors" aria-hidden="true" />
-            </a>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* GitHub Stats */}
-      <GithubStats />
-
-      {/* Blog preview */}
-      <section id="blog" aria-labelledby="blog-heading" className="py-24 sm:py-32 px-5 sm:px-10 border-t border-zinc-900 bg-zinc-950">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="flex items-center gap-3 mb-4"
-          >
-            <BookOpenIcon className="text-white" size={20} aria-hidden="true" />
-            <h2 id="blog-heading" className="text-xl font-bold text-white">LATEST POSTS</h2>
-          </motion.div>
-          <p className="text-zinc-500 text-sm mb-12 ml-8">Thoughts on web dev, tools, and tech</p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {latestPosts.map((post, i) => (
-              <motion.div
-                key={post.slug}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                viewport={{ amount: 0.5, margin: "-40px" }}
-              >
-                <Link href={`/blog/${post.slug}`}>
-                  <article className="group flex flex-col gap-3 p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-900 transition-all h-full">
-                    <div className="flex flex-wrap gap-1.5 mb-1">
-                      {post.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-500">{tag}</span>
-                      ))}
-                    </div>
-                    <h3 className="text-white font-bold text-base leading-snug group-hover:text-zinc-200 transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-zinc-500 text-sm leading-relaxed flex-1">{post.excerpt}</p>
-                    <div className="flex items-center justify-between text-xs text-zinc-600 pt-2 border-t border-zinc-800">
-                      <span>{post.readTime}</span>
-                      <span>{new Date(post.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span>
-                    </div>
-                  </article>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ amount: 0.5, margin: "-80px" }}
-            className="mt-10 flex justify-center"
-          >
-            <Link
-              href="/blog"
-              className="flex items-center gap-2 px-6 py-3 rounded-full border border-zinc-700 text-zinc-300 text-sm hover:border-zinc-400 hover:text-white transition-all group"
-            >
-              <BookOpenIcon size={14} aria-hidden="true" />
-              <span>All posts</span>
-              <ArrowUpRightIcon size={14} className="text-zinc-600 group-hover:text-zinc-300 transition-colors" aria-hidden="true" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section id="contact" aria-labelledby="contact-heading" className="py-24 sm:py-32 px-5 sm:px-10 border-t border-zinc-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
-            <div className="flex-1">
-              <motion.div
-                initial={{ opacity: 0, translateX: -20 }}
-                whileInView={{ opacity: 1, translateX: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true, margin: "-80px" }}
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <MailIcon className="text-white" size={20} aria-hidden="true" />
-                  <h2 id="contact-heading" className="text-xl font-bold text-white">GET IN TOUCH</h2>
-                </div>
-                <p className="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-sm">
-                  Have a project in mind, or just want to say hi? I&apos;m always open to new opportunities and collaborations.
-                </p>
-                <div className="mt-8 flex flex-col gap-3 text-sm fill-zinc-500 text-zinc-500">
-                  <a href="https://github.com/nokarin-dev" target="_blank" rel="noopener noreferrer" aria-label="GitHub: nokarin-dev" className="flex items-center gap-3 hover:fill-white hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 30 30" aria-hidden="true">
-                      <path d="M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z"></path>
-                    </svg>
-                    <span>github.com/nokarin-dev</span>
-                  </a>
-                  <div className="flex items-center gap-3">
-                    <MapPinIcon size={16} aria-hidden="true" />
-                    <span>Indonesia</span>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+              <h4 className="text-lg font-semibold text-white mb-8">Technical Mastery</h4>
+              <SkillBars />
+            </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, translateX: 20 }}
-              whileInView={{ opacity: 1, translateX: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true, margin: "-80px" }}
-              className="flex-1"
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }} viewport={{ once: true, margin: "-100px" }}
+              className="p-8 sm:p-10 rounded-2xl bg-white/2 backdrop-blur-xl border border-white/5"
             >
-              {sent ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  role="status"
-                  aria-live="polite"
-                  className="flex flex-col items-center justify-center gap-4 h-full min-h-60 rounded-2xl border border-zinc-800 bg-zinc-950 p-10 text-center"
-                >
-                  <div className="text-3xl" aria-hidden="true">✉️</div>
-                  <p className="text-white font-semibold text-lg">Message sent!</p>
-                  <p className="text-zinc-500 text-sm">Thanks for reaching out. I&apos;ll get back to you soon.</p>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="contact-name" className="text-xs text-zinc-500 font-medium uppercase tracking-widest">Name</label>
-                      <input
-                        id="contact-name"
-                        type="text"
-                        required
-                        autoComplete="name"
-                        value={formState.name}
-                        onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                        placeholder="Your Name"
-                        aria-required="true"
-                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label htmlFor="contact-email" className="text-xs text-zinc-500 font-medium uppercase tracking-widest">Email</label>
-                      <input
-                        id="contact-email"
-                        type="email"
-                        required
-                        autoComplete="email"
-                        value={formState.email}
-                        onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                        placeholder="you@email.com"
-                        aria-required="true"
-                        className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
-                      />
+              <h4 className="text-lg font-semibold text-white mb-10">Arsenal</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+                {stackCategories.map((cat) => (
+                  <div key={cat.label} className="flex flex-col gap-4">
+                    <p className="text-xs font-mono uppercase tracking-widest text-zinc-500">
+                      {cat.label}
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                      {cat.items.map((item) => (
+                        <div key={item.icon} className="group relative flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 rounded-xl bg-white/3 border border-white/5 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:bg-white/8 group-hover:border-white/20 group-hover:-translate-y-1">
+                            <Image
+                              src={`https://skillicons.dev/icons?i=${item.icon}`}
+                              alt={item.name} width={24} height={24} unoptimized
+                              className="grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                            />
+                          </div>
+                          <span className="absolute -bottom-6 opacity-0 group-hover:opacity-100 text-[10px] text-zinc-400 font-mono tracking-wider transition-opacity whitespace-nowrap">
+                            {item.name}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="contact-message" className="text-xs text-zinc-500 font-medium uppercase tracking-widest">Message</label>
-                    <textarea
-                      id="contact-message"
-                      required
-                      value={formState.message}
-                      onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                      placeholder="Hey, I'd love to work with you on..."
-                      rows={5}
-                      aria-required="true"
-                      className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors resize-none"
-                    />
-                  </div>
-                  {sendError && <p role="alert" className="text-red-400 text-xs">{sendError}</p>}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    disabled={sending}
-                    aria-label="Send message"
-                    className="flex items-center justify-center gap-2 bg-white text-black font-semibold text-sm px-6 py-3 rounded-xl hover:bg-zinc-200 transition-colors self-end disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <SendIcon size={15} aria-hidden="true" />
-                    {sending ? "Sending…" : "Send message"}
-                  </motion.button>
-                </form>
-              )}
+                ))}
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-black border-t border-zinc-900 py-8 px-5 sm:px-10" role="contentinfo">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-zinc-600 fill-zinc-600 text-sm">
-          <p>© {new Date().getFullYear()} nokarin. All rights reserved.</p>
-          <div className="flex gap-5">
-            <a href="https://linkedin.com/in/nokarin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="hover:text-white hover:fill-white transition flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" />
-              </svg>
-              LinkedIn
+      <section id="projects" className="py-32 relative z-10">
+        <div className="max-w-7xl mx-auto px-5 sm:px-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-100px" }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16"
+          >
+            <div>
+              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-4">
+                <span className="w-8 h-px bg-zinc-600 block"></span> Portfolio
+              </h2>
+              <h3 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">
+                Selected Works
+              </h3>
+            </div>
+            <a
+              href="https://github.com/nokarin-dev?tab=repositories" target="_blank"
+              className="group flex items-center gap-3 pb-2 border-b border-white/20 text-zinc-300 hover:text-white hover:border-white transition-all text-sm font-mono uppercase tracking-widest"
+            >
+              View Archive <ArrowUpRightIcon size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
-            <a href="https://github.com/nokarin-dev" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="hover:text-white hover:fill-white transition flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 30 30" aria-hidden="true">
-                <path d="M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z"></path>
-              </svg>
-              GitHub
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((project, i) => (
+              <ProjectCard key={project.name} project={project} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 py-16">
+        <GithubStats />
+      </section>
+
+      <section id="blog" className="py-32 px-5 sm:px-10 max-w-7xl mx-auto relative z-10 border-t border-white/5">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-100px" }}
+          className="mb-16"
+        >
+          <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-4">
+            <span className="w-8 h-px bg-zinc-600 block"></span> Journal
+          </h2>
+          <h3 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">Recent Writing</h3>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {latestPosts.map((post, i) => (
+            <motion.div
+              key={post.slug}
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.1 }} viewport={{ once: true, margin: "-50px" }}
+            >
+              <Link href={`/blog/${post.slug}`} className="block h-full group outline-none">
+                <article className="flex flex-col h-full p-8 rounded-2xl bg-white/2 backdrop-blur-xl border border-white/5 hover:bg-white/4 hover:border-white/20 transition-all duration-500">
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {post.tags.slice(0, 2).map((tag) => (
+                      <span key={tag} className="text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-zinc-400">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="text-white font-bold text-xl leading-snug mb-3 group-hover:text-zinc-200 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-zinc-400 text-sm font-light leading-relaxed flex-1 mb-8">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between text-xs font-mono text-zinc-600 uppercase tracking-widest pt-4 border-t border-white/5">
+                    <span>{post.readTime}</span>
+                    <span>{new Date(post.date).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })}</span>
+                  </div>
+                </article>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section id="contact" className="py-32 px-5 sm:px-10 relative z-10 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-100px" }}
+          >
+            <Code2Icon className="mx-auto text-zinc-600 mb-6" size={32} />
+            <h3 className="text-5xl font-bold text-white tracking-tight mb-6">Initiate Sequence.</h3>
+            <p className="text-zinc-400 text-lg font-light mb-16 max-w-xl mx-auto">
+              Whether it's a complex system architecture or a modern UI build, my inbox is always open for new opportunities.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true, margin: "-100px" }}
+            className="rounded-3xl bg-white/2 backdrop-blur-2xl border border-white/5 p-8 md:p-12 text-left shadow-2xl relative overflow-hidden"
+          >
+            {sent ? (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-center py-12">
+                <div className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center text-2xl mb-6">✓</div>
+                <h4 className="text-2xl font-bold text-white mb-2">Transmission Successful</h4>
+                <p className="text-zinc-400 font-mono text-sm">Awaiting manual response from Nokarin.</p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-8" noValidate>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex flex-col gap-3">
+                    <label htmlFor="name" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Subject Name</label>
+                    <input
+                      id="name" type="text" required value={formState.name}
+                      onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                      className="bg-transparent border-b border-white/10 pb-3 text-white text-base placeholder:text-zinc-700 focus:outline-none focus:border-white transition-colors"
+                      placeholder="A"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <label htmlFor="email" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Return Address</label>
+                    <input
+                      id="email" type="email" required value={formState.email}
+                      onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                      className="bg-transparent border-b border-white/10 pb-3 text-white text-base placeholder:text-zinc-700 focus:outline-none focus:border-white transition-colors"
+                      placeholder="a@example.com"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="message" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Payload</label>
+                  <textarea
+                    id="message" required rows={4} value={formState.message}
+                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                    className="bg-transparent border-b border-white/10 pb-3 text-white text-base placeholder:text-zinc-700 focus:outline-none focus:border-white transition-colors resize-none"
+                    placeholder="Describe your vision..."
+                  />
+                </div>
+
+                {sendError && <p className="text-red-400 text-xs font-mono">{sendError}</p>}
+
+                <button
+                  type="submit" disabled={sending}
+                  className="group flex items-center justify-center gap-3 bg-white text-black font-semibold text-sm px-8 py-4 rounded-lg hover:bg-zinc-200 transition-all disabled:opacity-50 self-end mt-4"
+                >
+                  {sending ? "TRANSMITTING..." : "EXECUTE"}
+                  {!sending && <SendIcon size={14} className="group-hover:translate-x-1 transition-transform" />}
+                </button>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      <footer className="relative z-10 border-t border-white/5 bg-black py-10 px-5 sm:px-10 text-xs font-mono uppercase tracking-widest text-zinc-600">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <p>© {new Date().getFullYear()} NOKARIN.</p>
+          <div className="flex gap-8">
+            <a href="https://linkedin.com/in/nokarin" target="_blank" className="hover:text-white transition-colors flex items-center gap-2">
+              <LinkedinSVG className="w-4 h-4" /> Link
             </a>
-            <Link href="/blog" className="hover:text-white transition">Blog</Link>
+            <a href="https://github.com/nokarin-dev" target="_blank" className="hover:text-white transition-colors flex items-center gap-2">
+              <GithubSVG className="w-4 h-4" /> Source
+            </a>
+            <Link href="/blog" className="hover:text-white transition-colors">Journal</Link>
           </div>
         </div>
       </footer>
-    </>
+    </div>
   )
 }
