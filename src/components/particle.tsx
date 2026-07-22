@@ -30,11 +30,14 @@ export default function Particle({
 
     const { theme } = useTheme();
     const particleColorRGB = useRef<string>("255, 255, 255");
+    const activeQuantity = useRef<number>(quantity);
 
     const updateParticleColor = () => {
+        particleColorRGB.current = theme === "light" ? "24, 24, 27" : "255, 255, 255";
+
         if (typeof window !== "undefined") {
-            const isDark = document.documentElement.classList.contains("dark");
-            particleColorRGB.current = isDark ? "255, 255, 255" : "24, 24, 27";
+            const isMobile = window.innerWidth < 768;
+            activeQuantity.current = isMobile ? Math.floor(quantity / 3) : quantity;
         }
     };
 
@@ -47,12 +50,25 @@ export default function Particle({
         if (canvasRef.current) {
             context.current = canvasRef.current.getContext("2d");
         }
-        updateParticleColor();
-        initCanvas();
-        animate();
+
+        let animationFrameId: number;
+
+        const layoutPaintDelay = setTimeout(() => {
+            updateParticleColor();
+            initCanvas();
+
+            const loop = () => {
+                animateFrame();
+                animationFrameId = window.requestAnimationFrame(loop);
+            };
+            loop();
+        }, 100);
+
         window.addEventListener("resize", initCanvas);
 
         return () => {
+            clearTimeout(layoutPaintDelay);
+            if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
             window.removeEventListener("resize", initCanvas);
         };
     }, []);
@@ -84,18 +100,7 @@ export default function Particle({
         }
     };
 
-    type Circle = {
-        x: number;
-        y: number;
-        translateX: number;
-        translateY: number;
-        size: number;
-        alpha: number;
-        targetAlpha: number;
-        dx: number;
-        dy: number;
-        magnetism: number;
-    };
+    type Circle = { x: number; y: number; translateX: number; translateY: number; size: number; alpha: number; targetAlpha: number; dx: number; dy: number; magnetism: number; };
 
     const resizeCanvas = () => {
         if (canvasContainerRef.current && canvasRef.current && context.current) {
@@ -113,26 +118,12 @@ export default function Particle({
     const circleParams = (): Circle => {
         const x = Math.floor(Math.random() * canvasSize.current.w);
         const y = Math.floor(Math.random() * canvasSize.current.h);
-        const translateX = 0;
-        const translateY = 0;
         const size = Math.floor(Math.random() * 2) + 0.1;
-        const alpha = 0;
         const targetAlpha = parseFloat((Math.random() * 0.4 + 0.05).toFixed(2));
         const dx = (Math.random() - 0.5) * 0.2;
         const dy = (Math.random() - 0.5) * 0.2;
         const magnetism = 0.1 + Math.random() * 4;
-        return {
-            x,
-            y,
-            translateX,
-            translateY,
-            size,
-            alpha,
-            targetAlpha,
-            dx,
-            dy,
-            magnetism,
-        };
+        return { x, y, translateX: 0, translateY: 0, size, alpha: 0, targetAlpha, dx, dy, magnetism };
     };
 
     const drawCircle = (circle: Circle, update = false) => {
@@ -144,98 +135,49 @@ export default function Particle({
             context.current.fillStyle = `rgba(${particleColorRGB.current}, ${alpha})`;
             context.current.fill();
             context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-            if (!update) {
-                circles.current.push(circle);
-            }
-        }
-    };
-
-    const clearContext = () => {
-        if (context.current) {
-            context.current.clearRect(
-                0,
-                0,
-                canvasSize.current.w,
-                canvasSize.current.h,
-            );
+            if (!update) circles.current.push(circle);
         }
     };
 
     const drawParticles = () => {
-        clearContext();
-        const particleCount = quantity;
-        for (let i = 0; i < particleCount; i++) {
-            const circle = circleParams();
-            drawCircle(circle);
-        }
+        if (context.current) context.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
+        for (let i = 0; i < activeQuantity.current; i++) drawCircle(circleParams());
     };
 
-    const remapValue = (
-        value: number,
-        start1: number,
-        end1: number,
-        start2: number,
-        end2: number,
-    ): number => {
-        const remapped =
-            ((value - start1) * (end2 - start2)) / (end1 - start1) + start2;
-        return remapped > 0 ? remapped : 0;
-    };
+    const animateFrame = () => {
+        if (context.current) context.current.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
 
-    const animate = () => {
-        clearContext();
         circles.current.forEach((circle: Circle, i: number) => {
-            const edge = [
-                circle.x + circle.translateX - circle.size,
-                canvasSize.current.w - circle.x - circle.translateX - circle.size,
-                circle.y + circle.translateY - circle.size,
-                canvasSize.current.h - circle.y - circle.translateY - circle.size,
-            ];
-            const closestEdge = edge.reduce((a, b) => Math.min(a, b));
-            const remapClosestEdge = parseFloat(
-                remapValue(closestEdge, 0, 20, 0, 1).toFixed(2),
-            );
+            const e1 = circle.x + circle.translateX - circle.size;
+            const e2 = canvasSize.current.w - circle.x - circle.translateX - circle.size;
+            const e3 = circle.y + circle.translateY - circle.size;
+            const e4 = canvasSize.current.h - circle.y - circle.translateY - circle.size;
+
+            const closestEdge = Math.min(e1, e2, e3, e4);
+            const remapClosestEdge = closestEdge > 20 ? 1 : Math.max(0, closestEdge / 20);
+
             if (remapClosestEdge > 1) {
                 circle.alpha += 0.02;
-                if (circle.alpha > circle.targetAlpha) {
-                    circle.alpha = circle.targetAlpha;
-                }
+                if (circle.alpha > circle.targetAlpha) circle.alpha = circle.targetAlpha;
             } else {
                 circle.alpha = circle.targetAlpha * remapClosestEdge;
             }
+
             circle.x += circle.dx;
             circle.y += circle.dy;
-            circle.translateX +=
-                (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
-                ease;
-            circle.translateY +=
-                (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
-                ease;
+            circle.translateX += (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) / ease;
+            circle.translateY += (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) / ease;
+
             if (
-                circle.x < -circle.size ||
-                circle.x > canvasSize.current.w + circle.size ||
-                circle.y < -circle.size ||
-                circle.y > canvasSize.current.h + circle.size
+                circle.x < -circle.size || circle.x > canvasSize.current.w + circle.size ||
+                circle.y < -circle.size || circle.y > canvasSize.current.h + circle.size
             ) {
                 circles.current.splice(i, 1);
-                const newCircle = circleParams();
-                drawCircle(newCircle);
+                drawCircle(circleParams());
             } else {
-                drawCircle(
-                    {
-                        ...circle,
-                        x: circle.x,
-                        y: circle.y,
-                        translateX: circle.translateX,
-                        translateY: circle.translateY,
-                        alpha: circle.alpha,
-                    },
-                    true,
-                );
+                drawCircle({ ...circle }, true);
             }
         });
-        window.requestAnimationFrame(animate);
     };
 
     return (

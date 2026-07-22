@@ -25,11 +25,20 @@ export default function Header() {
   const observerRef = useRef<IntersectionObserver | null>(null)
 
   useEffect(() => {
-    const check = () => setScrolled(window.scrollY > 40)
-    check()
-    window.addEventListener("scroll", check, { passive: true })
-    return () => window.removeEventListener("scroll", check)
-  }, [pathname])
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 40);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const teardown = useCallback(() => {
     if (observerRef.current) { observerRef.current.disconnect(); observerRef.current = null }
@@ -69,7 +78,9 @@ export default function Header() {
     <header className="fixed w-full top-0 z-50 px-4 pt-4 sm:pt-6" role="banner">
       <div className={cn(
         "hidden sm:flex flex-row items-center justify-between p-1.5 rounded-full max-w-fit mx-auto transition-all duration-500",
-        scrolled ? "bg-glass backdrop-blur-2xl border border-glass-border shadow-sm" : "bg-transparent border border-transparent"
+        scrolled
+          ? "bg-glass border border-glass-border backdrop-blur-xl [-webkit-backdrop-filter:blur(16px)] shadow-sm"
+          : "bg-transparent border border-transparent"
       )}>
         <nav className="flex flex-row items-center gap-1 px-2" aria-label="Main navigation">
           {navLinks.map((link) => {
@@ -81,7 +92,14 @@ export default function Header() {
                   linkActive ? "text-foreground font-medium" : "text-muted hover:text-foreground"
                 )}
               >
-                {linkActive && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-full bg-glass border border-glass-border" style={{ zIndex: -1 }} transition={{ type: "spring", stiffness: 400, damping: 35 }} />}
+                {linkActive && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-full bg-glass border border-glass-border backdrop-blur-md [-webkit-backdrop-filter:blur(12px)]"
+                    style={{ zIndex: -1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                  />
+                )}
                 {link.label}
               </a>
             )
@@ -92,7 +110,9 @@ export default function Header() {
 
       <div className={cn(
         "sm:hidden flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-500",
-        scrolled || open ? "bg-glass backdrop-blur-2xl border border-glass-border" : "bg-transparent border border-transparent"
+        scrolled || open
+          ? "bg-glass border border-glass-border backdrop-blur-xl [-webkit-backdrop-filter:blur(16px)]"
+          : "bg-transparent border border-transparent"
       )}>
         <span className="text-foreground font-bold text-sm tracking-widest uppercase font-mono">Nokarin.</span>
         <div className="flex items-center gap-4">
@@ -104,14 +124,21 @@ export default function Header() {
       </div>
 
       {open && (
-        <motion.div initial={{ opacity: 0, y: -10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.2, ease: "easeOut" }} className="sm:hidden mt-3 flex flex-col gap-1 backdrop-blur-3xl bg-background/90 border border-glass-border rounded-2xl p-2">
+        <motion.div
+          initial={{ opacity: 0, y: -10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="sm:hidden mt-3 flex flex-col gap-1 bg-background/90 border border-glass-border rounded-2xl p-2 backdrop-blur-2xl [-webkit-backdrop-filter:blur(24px)]"
+        >
           {navLinks.map((link) => {
             const linkActive = isLinkActive(link)
             return (
               <a key={link.label} href={link.href} onClick={() => setOpen(false)}
                 className={cn(
                   "text-xs font-mono uppercase tracking-widest px-5 py-4 rounded-xl transition-all",
-                  linkActive ? "text-foreground bg-glass border border-glass-border" : "text-muted hover:text-foreground hover:bg-glass"
+                  linkActive
+                    ? "text-foreground bg-glass border border-glass-border"
+                    : "text-muted hover:text-foreground hover:bg-glass"
                 )}
               >
                 {link.label}

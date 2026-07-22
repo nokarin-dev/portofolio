@@ -98,7 +98,7 @@ export default function GithubStats() {
     <section id="activity" className="py-24 sm:py-32 px-5 sm:px-10 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true, margin: "-100px" }} className="mb-16">
         <h2 className="text-xs font-mono uppercase tracking-widest text-muted mb-4 flex items-center gap-4"><span className="w-8 h-px bg-muted block"></span> Live Stats</h2>
-        <div className="flex items-center gap-4"><GithubSVG /><h3 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">Open Source.</h3></div>
+        <div className="flex items-center gap-4"><h3 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight">Open Source.</h3></div>
       </motion.div>
       {error ? (
         <p className="text-muted font-mono text-xs">ERR: CONNECTION_REFUSED (GitHub API Limit)</p>
