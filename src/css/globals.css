@@ -1,5 +1,51 @@
 @import "tailwindcss";
 
+@theme {
+    --color-background: var(--bg);
+    --color-foreground: var(--fg);
+    --color-muted: var(--muted);
+
+    --color-glass: var(--glass);
+    --color-glass-hover: var(--glass-hover);
+    --color-glass-border: var(--glass-border);
+    --color-glass-border-hover: var(--glass-border-hover);
+}
+
+@layer base {
+
+    :root,
+    .light {
+        --bg: #f4f4f5;
+        --fg: #09090b;
+        --muted: #71717a;
+        --glass: rgba(255, 255, 255, 0.6);
+        --glass-hover: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(0, 0, 0, 0.08);
+        --glass-border-hover: rgba(0, 0, 0, 0.2);
+    }
+
+    .dark {
+        --bg: #000000;
+        --fg: #fafafa;
+        --muted: #a1a1aa;
+        --glass: rgba(255, 255, 255, 0.03);
+        --glass-hover: rgba(255, 255, 255, 0.06);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --glass-border-hover: rgba(255, 255, 255, 0.15);
+    }
+
+    html,
+    body {
+        background-color: var(--bg);
+        color: var(--fg);
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: var(--muted) transparent;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.4s ease, color 0.4s ease;
+    }
+}
+
 @media (pointer: fine) {
     * {
         cursor: none !important;
@@ -11,16 +57,8 @@
     }
 }
 
-html,
-body {
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: #3f3f46 transparent;
-    -webkit-tap-highlight-color: transparent;
-}
-
 :focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.3);
+    outline: 2px solid var(--muted);
     outline-offset: 2px;
     border-radius: 4px;
 }
@@ -32,124 +70,18 @@ body {
 }
 
 .cursor-glass-core {
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--glass);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.36);
+    border: 1px solid var(--glass-border);
 }
 
 .cursor-glass-content {
     padding: 8px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #000;
+    background: var(--fg);
+    color: var(--bg);
     font-size: 13px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.36);
-}
-
-html.light body {
-    background-color: #fafafa;
-    color: #18181b;
-}
-
-html.light .bg-black {
-    background-color: #dddddd !important;
-}
-
-html.light .bg-zinc-950 {
-    background-color: #f4f4f5 !important;
-}
-
-html.light .bg-zinc-900 {
-    background-color: #e4e4e7 !important;
-}
-
-html.light .bg-zinc-800 {
-    background-color: #d4d4d8 !important;
-}
-
-html.light .border-zinc-900 {
-    border-color: #e4e4e7 !important;
-}
-
-html.light .border-zinc-800 {
-    border-color: #d4d4d8 !important;
-}
-
-html.light .border-zinc-700 {
-    border-color: #a1a1aa !important;
-}
-
-html.light .border-zinc-700\/60 {
-    border-color: rgba(161, 161, 170, 0.6) !important;
-}
-
-html.light .text-white {
-    color: #18181b !important;
-}
-
-html.light .text-zinc-300 {
-    color: #3f3f46 !important;
-}
-
-html.light .text-zinc-400 {
-    color: #52525b !important;
-}
-
-html.light .text-zinc-500 {
-    color: #71717a !important;
-}
-
-html.light .text-zinc-600 {
-    color: #52525b !important;
-}
-
-html.light .bg-black\/60 {
-    background-color: #b9b9b999 !important;
-}
-
-html.light .bg-zinc-900\/50 {
-    background-color: #e4e4e780 !important;
-}
-
-html.light .bg-zinc-950\/50 {
-    background-color: color-mix(in oklab, var(--color-zinc-400) 50%, transparent);
-}
-
-html.light .fill-white {
-    fill: #18181b !important;
-}
-
-html.light .bg-white {
-    background-color: #18181b !important;
-}
-
-html.light .text-black {
-    color: #fafafa !important;
-}
-
-html.light .border-zinc-900 {
-    border-color: var(--color-zinc-900);
-}
-
-html.light .to-black {
-    --tw-gradient-to: #dddddd;
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-}
-
-code {
-    @apply bg-zinc-800/60 font-mono text-xs px-1.5 py-0.5 rounded border border-zinc-700/50;
-}
-
-@property --tw-gradient-position {
-    syntax: "*";
-    inherits: false;
-}
-
-@property --tw-gradient-from {
-    syntax: "<color>";
-    inherits: false;
-    initial-value: #dddddd;
 }

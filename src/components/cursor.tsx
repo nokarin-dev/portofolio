@@ -5,11 +5,24 @@ import { useMotionValue } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-type CursorMode = "default" | "large" | "outline" | "caret" | "hidden" | "content" | "drag";
+type CursorMode = "default" | "interactive" | "caret" | "content" | "hidden";
 
-const DEFAULT_SIZE = 14;
+const DEFAULT_SIZE = 12;
+const INTERACTIVE_SIZE = 48;
 const CARET_W = 2;
-const CARET_H = 22;
+const CARET_H = 24;
+
+function isInteractiveElement(el: Element | null) {
+    if (!el) return false;
+    const tag = el.tagName.toLowerCase();
+    return (
+        tag === "a" ||
+        tag === "button" ||
+        el.closest("a") !== null ||
+        el.closest("button") !== null ||
+        el.getAttribute("role") === "button"
+    );
+}
 
 function isTextElement(el: Element | null) {
     if (!el) return false;
@@ -20,30 +33,15 @@ function isTextElement(el: Element | null) {
         return ["text", "search", "email", "password", "url", "tel"].includes(t);
     }
     if (el.getAttribute && el.getAttribute("contenteditable") === "true") return true;
-    return ["p", "span", "label", "b", "i", "strong", "em", "h1", "h2", "h3", "h4", "h5", "h6", "li", "div"].includes(tag);
-}
-
-function getTextHeight(el: Element | null) {
-    if (!el) return CARET_H;
-    const styles = window.getComputedStyle(el);
-    const lineHeight = parseFloat(styles.lineHeight);
-    const fontSize = parseFloat(styles.fontSize);
-
-    if (!isNaN(lineHeight)) {
-        return Math.max(lineHeight, 16);
-    } else if (!isNaN(fontSize)) {
-        return Math.max(fontSize * 1.2, 16);
-    }
-
-    return CARET_H;
+    return ["p", "span", "label", "h1", "h2", "h3", "h4", "h5", "h6", "li"].includes(tag);
 }
 
 export function CursorProvider({ children }: { children: React.ReactNode }) {
     return (
-        <div>
+        <>
             <CursorShell />
             {children}
-        </div>
+        </>
     );
 }
 
@@ -55,77 +53,67 @@ function CursorShell() {
     const [mounted, setMounted] = useState(false);
     const [mode, setMode] = useState<CursorMode>("default");
     const [content, setContent] = useState<React.ReactNode | null>(null);
-    const [forceHide, setForceHide] = useState(false);
-    const [coreSize, setCoreSize] = useState(DEFAULT_SIZE);
-    const [coreRadius, setCoreRadius] = useState(DEFAULT_SIZE / 2);
-    const [coreScale, setCoreScale] = useState(1);
-    const [caretHeight, setCaretHeight] = useState(CARET_H);
     const hoverTarget = useRef<Element | null>(null);
+    const [enabled, setEnabled] = useState(false);
 
     useEffect(() => setMounted(true), []);
+
+    useEffect(() => {
+        const mq = window.matchMedia("(pointer: fine)");
+        setEnabled(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setEnabled(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
 
     useEffect(() => {
         const onPointerMove = (e: PointerEvent) => {
             mx.set(e.clientX);
             my.set(e.clientY);
-
             if (!visible) setVisible(true);
         };
-
         const onPointerEnter = () => setVisible(true);
-
         const onMouseOut = (e: MouseEvent) => {
             if ((e as any).relatedTarget === null) setVisible(false);
-        };
-
-        const onVisibility = () => {
-            if (document.visibilityState === "visible") setVisible(true);
         };
 
         window.addEventListener("pointermove", onPointerMove, { passive: true });
         window.addEventListener("pointerenter", onPointerEnter);
         window.addEventListener("mouseout", onMouseOut);
-        document.addEventListener("visibilitychange", onVisibility);
 
         return () => {
             window.removeEventListener("pointermove", onPointerMove);
             window.removeEventListener("pointerenter", onPointerEnter);
             window.removeEventListener("mouseout", onMouseOut);
-            document.removeEventListener("visibilitychange", onVisibility);
         };
     }, [visible, mx, my]);
 
     useEffect(() => {
-        const selector = "[data-cursor], [data-cursor-content], a, button, input, textarea, [contenteditable='true'], p, span, label, h1, h2, h3, h4, h5, h6";
+        const selector = "a, button, [role='button'], input, textarea, [contenteditable='true'], p, span, h1, h2, h3, h4, h5, h6, [data-cursor-content]";
 
         const handleEnter = (el: Element) => {
             hoverTarget.current = el;
 
-            if (isTextElement(el)) {
-                const height = getTextHeight(el);
-                setMode("caret");
-                setCoreSize(CARET_W);
-                setCaretHeight(height);
-                setCoreRadius(1);
-                setCoreScale(1);
+            const customContent = el.getAttribute("data-cursor-content");
+            if (customContent !== null) {
+                setMode("content");
+                setContent(customContent);
+                return;
+            }
+
+            if (isInteractiveElement(el)) {
+                setMode("interactive");
                 setContent(null);
                 return;
             }
 
-            const custom = el.getAttribute("data-cursor-content");
-            if (custom !== null) {
-                setMode("content");
-                setContent(custom);
-                setCoreSize(DEFAULT_SIZE);
-                setCoreRadius(8);
-                setCoreScale(1);
+            if (isTextElement(el)) {
+                setMode("caret");
+                setContent(null);
                 return;
             }
 
             setMode("default");
-            setCoreSize(DEFAULT_SIZE);
-            setCoreRadius(DEFAULT_SIZE / 2);
-            setCoreScale(1);
         };
 
         const handleLeave = (el: Element) => {
@@ -133,10 +121,6 @@ function CursorShell() {
                 hoverTarget.current = null;
                 setMode("default");
                 setContent(null);
-                setCoreSize(DEFAULT_SIZE);
-                setCoreRadius(DEFAULT_SIZE / 2);
-                setCoreScale(1);
-                setCaretHeight(CARET_H);
             }
         };
 
@@ -163,107 +147,79 @@ function CursorShell() {
         };
     }, []);
 
-    const [enabled, setEnabled] = useState(false);
-
-    useEffect(() => {
-        const mq = window.matchMedia("(pointer: fine)");
-        setEnabled(mq.matches);
-
-        const handler = (e: MediaQueryListEvent) => {
-            setEnabled(e.matches);
-        };
-        mq.addEventListener("change", handler);
-
-        return () => mq.removeEventListener("change", handler);
-    }, []);
-
-    if (!mounted) return null;
-    if (!enabled) return null;
+    if (!mounted || !enabled) return null;
 
     return createPortal(
         <div aria-hidden style={{ pointerEvents: "none" }}>
-            {!forceHide && visible && (
-                <Core
-                    x={mx}
-                    y={my}
-                    size={coreSize}
-                    radius={coreRadius}
-                    scale={coreScale}
-                    mode={mode}
-                    content={content}
-                    caretHeight={caretHeight}
-                />
+            {visible && (
+                <Core x={mx} y={my} mode={mode} content={content} />
             )}
         </div>,
         document.body
     );
 }
 
-function Core({ x, y, size, radius, scale, mode, content, caretHeight }: {
-    x: any;
-    y: any;
-    size: number;
-    radius: number | number;
-    scale: number;
-    mode: CursorMode;
-    content: React.ReactNode | null;
-    caretHeight: number;
-}) {
+function Core({ x, y, mode, content }: { x: any; y: any; mode: CursorMode; content: React.ReactNode | null }) {
     const baseStyle: React.CSSProperties = {
-        position: "fixed",
-        left: 0,
-        top: 0,
-        x,
-        y,
+        position: "fixed", left: 0, top: 0, x, y,
         translate: "-50% -50%",
         zIndex: 2147483647,
         pointerEvents: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        willChange: "transform, width, height, opacity",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        willChange: "width, height, transform, background-color, border",
     };
 
-    if (mode === "caret") {
-        return (
-            <motion.div
-                style={baseStyle}
-                animate={{
-                    width: CARET_W,
-                    height: caretHeight,
-                    borderRadius: 2,
-                    background: "rgba(255,255,255,0.95)",
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-                    scale,
-                }}
-                transition={{ type: "spring", stiffness: 450, damping: 35 }}
-            />
-        );
-    }
-
-    if (mode === "content" && content) {
-        return (
-            <motion.div
-                style={{
-                    ...baseStyle,
-                }}
-                transition={{ type: "spring", stiffness: 4000, damping: 60 }}
-            >
-                <div className="cursor-glass-content">{content}</div>
-            </motion.div>
-        );
-    }
+    const variants = {
+        default: {
+            width: DEFAULT_SIZE,
+            height: DEFAULT_SIZE,
+            borderRadius: "50%",
+            backgroundColor: "var(--color-foreground)",
+            border: "0px solid transparent",
+            backdropFilter: "blur(0px)",
+        },
+        interactive: {
+            width: INTERACTIVE_SIZE,
+            height: INTERACTIVE_SIZE,
+            borderRadius: "50%",
+            backgroundColor: "var(--color-glass)",
+            border: "1px solid var(--color-glass-border-hover)",
+            backdropFilter: "blur(4px)",
+        },
+        caret: {
+            width: CARET_W,
+            height: CARET_H,
+            borderRadius: "2px",
+            backgroundColor: "var(--color-foreground)",
+            border: "0px solid transparent",
+            backdropFilter: "blur(0px)",
+        },
+        content: {
+            width: "auto",
+            height: "auto",
+            borderRadius: "999px",
+            backgroundColor: "transparent",
+            border: "0px solid transparent",
+            backdropFilter: "blur(0px)",
+        }
+    };
 
     return (
         <motion.div
-            style={{
-                ...baseStyle,
-                width: size,
-                height: size,
-                borderRadius: radius,
-                background: "rgba(255,255,255,0.95)",
-            }}
-            transition={{ type: "spring", stiffness: 3500, damping: 55 }}
-        />
+            style={baseStyle}
+            variants={variants}
+            animate={mode}
+            transition={{ type: "spring", stiffness: 600, damping: 40, mass: 0.5 }}
+        >
+            {mode === "content" && content && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="px-4 py-2 rounded-full bg-foreground text-background text-xs font-mono font-medium shadow-xl whitespace-nowrap"
+                >
+                    {content}
+                </motion.div>
+            )}
+        </motion.div>
     );
 }

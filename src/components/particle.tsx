@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { useMousePosition } from "@/lib/mouse";
+import { useTheme } from "./theme-provider";
 
 interface ParticlesProps {
     className?: string;
@@ -13,7 +14,7 @@ interface ParticlesProps {
 
 export default function Particle({
     className = "",
-    quantity = 30,
+    quantity = 40,
     staticity = 50,
     ease = 50,
     refresh = false,
@@ -27,10 +28,26 @@ export default function Particle({
     const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
+    const { theme } = useTheme();
+    const particleColorRGB = useRef<string>("255, 255, 255");
+
+    const updateParticleColor = () => {
+        if (typeof window !== "undefined") {
+            const isDark = document.documentElement.classList.contains("dark");
+            particleColorRGB.current = isDark ? "255, 255, 255" : "24, 24, 27";
+        }
+    };
+
+    useEffect(() => {
+        updateParticleColor();
+        initCanvas();
+    }, [theme]);
+
     useEffect(() => {
         if (canvasRef.current) {
             context.current = canvasRef.current.getContext("2d");
         }
+        updateParticleColor();
         initCanvas();
         animate();
         window.addEventListener("resize", initCanvas);
@@ -100,7 +117,7 @@ export default function Particle({
         const translateY = 0;
         const size = Math.floor(Math.random() * 2) + 0.1;
         const alpha = 0;
-        const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(1));
+        const targetAlpha = parseFloat((Math.random() * 0.4 + 0.05).toFixed(2));
         const dx = (Math.random() - 0.5) * 0.2;
         const dy = (Math.random() - 0.5) * 0.2;
         const magnetism = 0.1 + Math.random() * 4;
@@ -124,7 +141,7 @@ export default function Particle({
             context.current.translate(translateX, translateY);
             context.current.beginPath();
             context.current.arc(x, y, size, 0, 2 * Math.PI);
-            context.current.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            context.current.fillStyle = `rgba(${particleColorRGB.current}, ${alpha})`;
             context.current.fill();
             context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
 
