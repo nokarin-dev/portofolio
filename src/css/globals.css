@@ -47,12 +47,12 @@
 }
 
 @media (pointer: fine) {
-    * {
+    html[data-custom-cursor] * {
         cursor: none !important;
     }
 
-    html,
-    body {
+    html[data-custom-cursor],
+    html[data-custom-cursor] body {
         cursor: none !important;
     }
 }
@@ -84,4 +84,15 @@
     color: var(--bg);
     font-size: 13px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.aqloss-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.aqloss-scroll::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }

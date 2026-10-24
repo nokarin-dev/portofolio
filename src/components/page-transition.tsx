@@ -32,6 +32,8 @@ export default function PageTransition({ children }: { children: React.ReactNode
     return clearTimer
   }, [pathname])
 
+  if (pathname.startsWith("/projects/aqloss")) return <>{children}</>;
+
   return (
     <>
       <div

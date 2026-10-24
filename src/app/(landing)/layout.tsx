@@ -71,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={[inter.variable, calSans.variable].join(" ")} suppressHydrationWarning>
+    <html lang="en" className={[inter.variable, calSans.variable].join(" ")} data-custom-cursor="" suppressHydrationWarning>
       <head>
         <Analytics />
         <GoogleAnalytics gaId="G-QSP6RGTH9T" />

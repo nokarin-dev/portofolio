@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeftIcon, ArrowRightIcon, ExternalLinkIcon, GitBranchIcon } from "lucide-react"
 import type { Metadata } from "next"
-import * as motion from "motion/react-client"
 
 interface Props {
     params: Promise<{ version: string }>
@@ -29,6 +28,12 @@ const TYPE_LABEL: Record<string, string> = {
     fixed: "Fixed",
     changed: "Changed",
     removed: "Removed",
+}
+
+function formatDay(iso: string) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const [y, m, d] = iso.split("-")
+    return `${months[Number(m) - 1]} ${Number(d)}, ${y}`
 }
 
 const TYPE_STYLE: Record<string, { badge: string; border: string; dot: string }> = {
@@ -75,23 +80,17 @@ export default async function ChangelogVersionPage({ params }: Props) {
     const stats = order.map((t) => ({ type: t, count: (grouped[t] ?? []).length })).filter((s) => s.count > 0)
 
     return (
-        <main className="min-h-screen bg-black text-white px-5 sm:px-10 pt-28 pb-32">
+        <main className="min-h-screen bg-[#060608] text-white px-5 sm:px-10 pt-12 pb-24">
             <article className="max-w-2xl mx-auto">
-                {/* back */}
                 <a
-                    href="/projects/aqloss/changelog"
+                    href="/projects/aqloss?panel=changelog"
                     className="inline-flex items-center gap-2 text-zinc-500 hover:text-white text-sm transition-colors mb-12"
                 >
                     <ArrowLeftIcon size={14} />
                     All releases
                 </a>
 
-                {/* header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45 }}
-                >
+                <div>
                     <div className="flex flex-wrap items-center gap-2.5 mb-2">
                         <p className="text-[11px] tracking-[0.2em] uppercase text-zinc-600">
                             Aqloss · Changelog
@@ -108,12 +107,7 @@ export default async function ChangelogVersionPage({ params }: Props) {
                     </h1>
 
                     <p className="text-zinc-600 text-xs font-mono mb-6">
-                        {new Date(release.date).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                        })}
+                        {formatDay(release.date)}
                     </p>
 
                     <p
@@ -147,27 +141,16 @@ export default async function ChangelogVersionPage({ params }: Props) {
                             <ExternalLinkIcon size={10} className="ml-0.5" />
                         </a>
                     )}
-                </motion.div>
+                </div>
 
-                {/* changes */}
                 {release.changes.length === 0 ? (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="py-16 text-center"
-                    >
+                    <div className="py-16 text-center">
                         <p className="text-zinc-700 text-sm">Initial public release - no prior version to diff against.</p>
-                    </motion.div>
+                    </div>
                 ) : (
                     <div className="flex flex-col gap-10">
-                        {order.filter((t) => grouped[t]).map((type, ti) => (
-                            <motion.section
-                                key={type}
-                                initial={{ opacity: 0, y: 16 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: 0.1 + ti * 0.08 }}
-                            >
+                        {order.filter((t) => grouped[t]).map((type) => (
+                            <section key={type}>
                                 <div className="flex items-center gap-2.5 mb-4">
                                     <span className={`w-2 h-2 rounded-full ${TYPE_STYLE[type].dot}`} aria-hidden />
                                     <h2 className={`text-xs font-semibold uppercase tracking-[0.18em] ${type === "added" ? "text-emerald-500"
@@ -194,18 +177,12 @@ export default async function ChangelogVersionPage({ params }: Props) {
                                         </div>
                                     ))}
                                 </div>
-                            </motion.section>
+                            </section>
                         ))}
                     </div>
                 )}
 
-                {/* version nav */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="mt-16 pt-8 border-t border-zinc-900 flex items-center justify-between gap-4"
-                >
+                <div className="mt-16 pt-8 border-t border-zinc-900 flex items-center justify-between gap-4">
                     <div>
                         {nextVersion ? (
                             <Link
@@ -221,7 +198,7 @@ export default async function ChangelogVersionPage({ params }: Props) {
                     </div>
 
                     <Link
-                        href="/projects/aqloss/changelog"
+                        href="/projects/aqloss?panel=changelog"
                         className="text-zinc-600 hover:text-zinc-300 text-xs transition-colors"
                     >
                         All releases
@@ -240,7 +217,7 @@ export default async function ChangelogVersionPage({ params }: Props) {
                             <span className="text-zinc-800 text-sm select-none">-</span>
                         )}
                     </div>
-                </motion.div>
+                </div>
             </article>
         </main>
     )

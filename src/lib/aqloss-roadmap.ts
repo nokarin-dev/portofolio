@@ -1,4 +1,4 @@
-export type RoadmapStatus = "done" | "in-progress" | "planned"
+export type RoadmapStatus = "done" | "in-progress" | "planned" | "backlog"
 
 export interface RoadmapItem {
     title: string

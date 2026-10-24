@@ -87,7 +87,7 @@ const projects = [
   {
     name: "Aqloss",
     tech: ["Flutter", "Dart", "Rust"],
-    desc: "Cross-platform music player architected strictly for bit-perfect, lossless, and hi-res audio playback.",
+    desc: "Local music player for Windows, Linux, and Android. Exclusive output on WASAPI and ALSA hardware.",
     href: "/projects/aqloss",
     image: "https://github.com/nokarin-dev/Aqloss/blob/main/assets/banner/github_banner.png?raw=true",
     status: "public",

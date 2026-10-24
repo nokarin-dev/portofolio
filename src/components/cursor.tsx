@@ -2,6 +2,7 @@
 
 import * as motion from "motion/react-client";
 import { useMotionValue } from "motion/react";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -37,6 +38,17 @@ function isTextElement(el: Element | null) {
 }
 
 export function CursorProvider({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const native = pathname.startsWith("/projects/aqloss");
+
+    useEffect(() => {
+        if (native) document.documentElement.removeAttribute("data-custom-cursor");
+        else document.documentElement.setAttribute("data-custom-cursor", "");
+        return () => document.documentElement.removeAttribute("data-custom-cursor");
+    }, [native]);
+
+    if (native) return <>{children}</>;
+
     return (
         <>
             <CursorShell />

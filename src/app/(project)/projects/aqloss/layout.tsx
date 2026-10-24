@@ -1,24 +1,23 @@
 import type { Metadata } from "next"
 import "@/css/globals.css"
-import AqlossHeader from "@/components/aqloss/aqloss-header"
 
 const BASE_URL = "https://nokarin.xyz/projects/aqloss"
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
     title: {
-        default: "Aqloss | Audio, uncompromised",
+        absolute: "Aqloss",
+        default: "Aqloss",
         template: "%s | Aqloss",
     },
     description:
-        "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
-    keywords: ["Aqloss", "music player", "cross-platform", "lossless audio", "hi-res audio", "bit-perfect"],
+        "A local music player for Windows, Linux, and Android. WASAPI Exclusive and ALSA hw: skip the mixer. FLAC, ALAC, WAV, and more. Unsigned.",
     authors: [{ name: "Nokarin", url: BASE_URL }],
     creator: "Nokarin",
     openGraph: {
-        title: "Aqloss | Lossless everywhere",
+        title: "Aqloss",
         description:
-            "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
+            "A local music player for Windows, Linux, and Android. WASAPI Exclusive and ALSA hw: skip the mixer.",
         url: BASE_URL,
         siteName: BASE_URL,
         images: [
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
                 url: "https://nokarin.xyz/projects/aqloss/og.png",
                 width: 1280,
                 height: 640,
-                alt: "Aqloss | Lossless everywhere",
+                alt: "Aqloss",
             },
         ],
         locale: "en-US",
@@ -34,8 +33,8 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Aqloss | Lossless everywhere",
-        description: "Aqloss is a cross-platform music player engineered for bit-perfect, lossless, and hi-res audio playback.",
+        title: "Aqloss",
+        description: "A local music player for Windows, Linux, and Android. WASAPI Exclusive and ALSA hw: skip the mixer.",
         images: ["https://nokarin.xyz/projects/aqloss/og.png"],
     },
     robots: {
@@ -61,10 +60,5 @@ export default function AqlossLayout({
 }: Readonly<{
     children: React.ReactNode
 }>) {
-    return (
-        <>
-            <AqlossHeader />
-            {children}
-        </>
-    )
+    return <>{children}</>
 }

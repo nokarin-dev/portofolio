@@ -14,6 +14,8 @@ interface GithubAsset {
 interface GithubRelease {
     tag_name: string
     published_at: string
+    prerelease?: boolean
+    draft?: boolean
     assets: GithubAsset[]
 }
 
@@ -63,7 +65,9 @@ export async function getAqlossStats(): Promise<AqlossStats> {
     let githubDownloads = 0
 
     if (releases.length > 0) {
-        const latest = releases[0]
+        const latest =
+            releases.find((r) => !r.tag_name.includes("nightly") && !r.prerelease && !r.draft) ??
+            releases[0]
         version = latest.tag_name.replace(/^v/, "")
         publishedAt = latest.published_at
 
